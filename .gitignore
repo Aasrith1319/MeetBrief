@@ -1,0 +1,13 @@
+.venv/
+__pycache__/
+*.pyc
+data/
+.pytest_cache/
+.DS_Store
+*.sqlite3*
+# local tool settings and build/test leftovers
+.claude/
+*.zip
+langtest/*.aiff
+langtest/v2/
+report/source/__pycache__/

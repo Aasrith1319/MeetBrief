@@ -1,0 +1,262 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MeetBrief AI</title>
+  <link rel="stylesheet" href="styles.css">
+  <!--MEETBRIEF_CONFIG-->
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <span class="logo" aria-hidden="true">◆</span>
+      <span>MeetBrief <b>AI</b></span>
+    </div>
+    <div class="topbar-right">
+      <span id="engineBadge" class="badge muted" title="Processing engine">…</span>
+      <button id="refreshBtn" class="icon-btn" title="Refresh" aria-label="Refresh">⟳</button>
+    </div>
+  </header>
+
+  <section class="capture" aria-label="Capture status">
+    <div class="capture-row">
+      <span id="captureDot" class="dot idle" aria-hidden="true"></span>
+      <span id="captureText" class="capture-text">Not capturing</span>
+      <span id="captureSource" class="capture-source"></span>
+    </div>
+    <div class="capture-controls" id="liveControls" hidden>
+      <button id="startCaptionsBtn" class="btn small primary" title="Reads Meet captions and records the tab audio together — whichever has the words, MeetBrief uses">Start capture (captions + tab audio)</button>
+      <button id="addAudioBtn" class="btn small" hidden title="Tab audio did not start with the capture — try again">Retry tab audio</button>
+      <button id="pauseBtn" class="btn small" hidden>Pause</button>
+      <button id="resumeBtn" class="btn small" hidden>Resume</button>
+      <button id="stopBtn" class="btn small danger" hidden>Stop</button>
+      <button id="shareRoomBtn" class="btn small" hidden title="Let members who join later get everything said from now on">Share with room</button>
+    </div>
+    <div id="roomBanner" class="room-banner" hidden>
+      <div class="row"><b>👥 <span id="roomTitle"></span></b><span id="roomMeta" class="muted small"></span></div>
+      <div class="row small"><span id="roomCapturer" class="muted"></span>
+        <button id="roomCatchupBtn" class="btn small">What I missed</button>
+        <button id="roomEndBtn" class="btn small danger" hidden>End room</button></div>
+    </div>
+    <div class="meeting-row">
+      <select id="meetingSelect" aria-label="Meeting"></select>
+      <label class="btn small" title="Upload a transcript (.txt, .vtt, .srt, .json, .docx) or a meeting recording (.mp4, .m4a, .mp3, .wav, …)">
+        Upload<input id="uploadInput" type="file" accept=".txt,.vtt,.srt,.json,.docx,.mp3,.m4a,.mp4,.wav,.webm,.ogg,.opus,.mkv,.mov,.aac,.flac,text/plain,audio/*,video/*" hidden>
+      </label>
+    </div>
+    <div class="row gap tiny-row">
+      <label class="check"><input type="checkbox" id="privateUpload"> Private mode (memory only)</label>
+      <span id="segmentCount" class="muted"></span>
+    </div>
+  </section>
+
+  <nav class="tabs" role="tablist">
+    <button role="tab" data-tab="catchup" class="active">Catch Me Up</button>
+    <button role="tab" data-tab="explain">Explain Again</button>
+    <button role="tab" data-tab="ask">Ask AI</button>
+    <button role="tab" data-tab="speakers">Who Said What?</button>
+    <button role="tab" data-tab="decisions">Decisions</button>
+    <button role="tab" data-tab="actions">Action Items</button>
+    <button role="tab" data-tab="timeline">Timeline</button>
+    <button role="tab" data-tab="transcript">Transcript</button>
+    <button role="tab" data-tab="notes">Notes</button>
+    <button role="tab" data-tab="schedule">Schedule</button>
+    <button role="tab" data-tab="settings">Settings</button>
+  </nav>
+
+  <main id="views">
+    <!-- Catch Me Up -->
+    <section class="view active" id="view-catchup">
+      <div class="controls">
+        <select id="summaryMode" aria-label="Summary type">
+          <option value="catchup">Catch-up recap</option>
+          <option value="quick">Quick summary</option>
+          <option value="detailed">Detailed summary</option>
+          <option value="chronological">Complete context (chronological)</option>
+          <option value="topic">By topic</option>
+          <option value="personalized">Personalized focus</option>
+        </select>
+        <select id="summaryFocus" aria-label="Focus" hidden>
+          <option value="decisions">Decisions</option>
+          <option value="tasks">Tasks</option>
+          <option value="technical">Technical concepts</option>
+          <option value="general">General context</option>
+        </select>
+        <select class="lang-select" id="summaryLang" aria-label="Summary language"></select>
+      </div>
+      <div class="controls">
+        <label class="inline">Since <input id="sinceMinutes" type="number" min="0" placeholder="all" title="Only recap the last N minutes"> min ago</label>
+        <label class="check"><input type="checkbox" id="liveSummary"> Live update</label>
+        <button id="summaryBtn" class="btn primary">Generate</button>
+      </div>
+      <div id="currentTopic" class="current-topic" hidden></div>
+      <div id="summaryOut" class="card output"><p class="muted">Upload a transcript or start capture, then generate a recap.</p></div>
+      <div id="suggested" class="suggested"></div>
+    </section>
+
+    <!-- Explain Again -->
+    <section class="view" id="view-explain">
+      <textarea id="explainText" rows="3" placeholder="Paste or select a sentence/term (e.g. database indexing). Tip: select text on the page and right-click → Explain with MeetBrief."></textarea>
+      <div class="controls">
+        <select id="explainStyle" aria-label="Style">
+          <option value="simplify">Simplify</option>
+          <option value="example">Examples</option>
+          <option value="step_by_step">Step by step</option>
+          <option value="detailed">Detailed</option>
+          <option value="analogy">Analogy</option>
+        </select>
+        <select id="explainLevel" aria-label="Difficulty">
+          <option value="beginner">Beginner</option>
+          <option value="intermediate">Intermediate</option>
+          <option value="advanced">Advanced</option>
+          <option value="expert">Expert</option>
+        </select>
+        <select class="lang-select" id="explainLang" aria-label="Explanation language"></select>
+      </div>
+      <div class="controls">
+        <button id="explainBtn" class="btn primary">Explain</button>
+        <button id="explainAgainBtn" class="btn" disabled>Explain another way</button>
+      </div>
+      <div id="explainOut" class="card output" hidden></div>
+    </section>
+
+    <!-- Ask AI -->
+    <section class="view" id="view-ask">
+      <div id="chat" class="chat" aria-live="polite"></div>
+      <div class="controls">
+        <select id="askSpeaker" aria-label="Filter by speaker"><option value="">All speakers</option></select>
+        <select class="lang-select" id="askLang" aria-label="Answer language"></select>
+        <button id="clearChatBtn" class="btn small">New chat</button>
+      </div>
+      <form id="askForm" class="ask-form">
+        <input id="askInput" autocomplete="off" placeholder="Ask about the meeting… e.g. Why did we choose indexing first?">
+        <button class="btn primary" type="submit">Ask</button>
+      </form>
+    </section>
+
+    <!-- Who said what -->
+    <section class="view" id="view-speakers"><div id="speakersOut"></div></section>
+
+    <!-- Decisions -->
+    <section class="view" id="view-decisions"><div id="decisionsOut"></div></section>
+
+    <!-- Action items -->
+    <section class="view" id="view-actions"><div id="actionsOut"></div></section>
+
+    <!-- Timeline -->
+    <section class="view" id="view-timeline"><div id="timelineOut"></div></section>
+
+    <!-- Transcript -->
+    <section class="view" id="view-transcript">
+      <form id="searchForm" class="ask-form">
+        <input id="searchInput" placeholder="Semantic search in this meeting (leave empty for full transcript)">
+        <button class="btn" type="submit">Search</button>
+      </form>
+      <div class="controls">
+        <label class="inline">Read in <select class="lang-select" id="transLang" aria-label="Language you read the transcript in"></select></label>
+        <label class="inline"><input type="checkbox" id="showOriginal" checked> show original</label>
+      </div>
+      <div id="transcriptOut" class="transcript"></div>
+    </section>
+
+    <!-- Notes -->
+    <section class="view" id="view-notes">
+      <p class="muted small">Personal notes are stored separately from AI-generated content.</p>
+      <form id="noteForm" class="ask-form">
+        <input id="noteInput" placeholder="Add a personal note…">
+        <button class="btn primary" type="submit">Add</button>
+      </form>
+      <div id="notesOut"></div>
+      <h3>Import the official transcript</h3>
+      <p class="muted small">Joined late and nobody was capturing? If the host turned on transcripts, pull the platform's own
+        transcript (it covers the whole meeting). It replaces this meeting's captured transcript.</p>
+      <div class="controls">
+        <select id="importProvider"><option value="google_meet">Google Meet (uses your Google sign-in)</option>
+          <option value="zoom">Zoom (paste access token)</option><option value="teams">Microsoft Teams (paste access token)</option></select>
+      </div>
+      <label class="field">Meeting link or code <input id="importRef" placeholder="https://meet.google.com/abc-defg-hij"></label>
+      <label class="field" id="importTokenField" hidden>Access token (used once, not stored) <input id="importToken" type="password"></label>
+      <div class="controls"><button id="importBtn" class="btn small">Import transcript</button><span id="importStatus" class="muted small"></span></div>
+      <h3>Export</h3>
+      <div class="controls">
+        <button class="btn small export" data-format="md">Markdown</button>
+        <button class="btn small export" data-format="pdf">PDF</button>
+        <button class="btn small export" data-format="txt">Text</button>
+        <button class="btn small export" data-format="json">JSON</button>
+      </div>
+      <h3>Search all meetings</h3>
+      <form id="historyForm" class="ask-form">
+        <input id="historyInput" placeholder="Search retained meeting history…">
+        <button class="btn" type="submit">Search</button>
+      </form>
+      <div id="historyOut"></div>
+    </section>
+
+    <!-- Schedule (Early Join) -->
+    <section class="view" id="view-schedule">
+      <p class="muted small">Early Join: at the start time MeetBrief opens the meeting in the browser with your mic and camera
+        off, joins, and captures from the first minute — so you have the full recap even if you arrive late.
+        Your computer and Chrome must be on.</p>
+      <label class="field">Meeting link (Google Meet, Zoom or Teams) <input id="schedUrl" placeholder="https://meet.google.com/abc-defg-hij"></label>
+      <label class="field">Title <input id="schedTitle" placeholder="Sprint planning"></label>
+      <label class="field">Starts at <input id="schedStart" type="datetime-local"></label>
+      <label class="check"><input type="checkbox" id="schedShare" checked> Share it as a MeetBrief room (members who join late get everything)</label>
+      <div class="controls"><button id="schedAdd" class="btn primary small">Schedule</button><span id="schedStatus" class="muted small"></span></div>
+      <div id="schedList" class="list"></div>
+    </section>
+
+    <!-- Settings -->
+    <section class="view" id="view-settings">
+      <h3>Account (shared rooms)</h3>
+      <div id="accountOut" class="card small"></div>
+      <div class="controls" id="googleRow" hidden><button id="signInBtn" class="btn primary small">Sign in with Google</button>
+        <button id="signOutBtn" class="btn small">Sign out</button></div>
+      <div id="devRow" hidden>
+        <p class="muted small">This server is in <b>test mode</b> (MEETBRIEF_ROOMS_DEV_AUTH=1): type any name and email to try rooms with several Chrome profiles.</p>
+        <label class="field">Your name <input id="devName" placeholder="Priya"></label>
+        <label class="field">Your email <input id="devEmail" placeholder="priya@college.edu"></label>
+        <div class="controls"><button id="devSave" class="btn small">Use this identity</button></div>
+      </div>
+      <p class="muted small">Google OAuth redirect URI for this extension: <code id="redirectUri"></code></p>
+      <label class="check"><input type="checkbox" id="prefAutoShare"> Share every meeting I join as a room without asking</label>
+      <h3>Connection</h3>
+      <label class="field" id="apiBaseField">Backend URL <input id="apiBase" placeholder="http://127.0.0.1:8000"></label>
+      <label class="field" id="tokenField">API token <input id="apiToken" type="password" placeholder="printed in the backend console"></label>
+      <div class="controls"><button id="saveConn" class="btn primary small">Save &amp; test</button><span id="connStatus" class="muted small"></span></div>
+      <h3>Language &amp; preferences</h3>
+      <label class="field">Summary language <select class="lang-select" id="prefSummaryLang"></select></label>
+      <label class="field">Explanation language <select class="lang-select" id="prefExplainLang"></select></label>
+      <label class="field">Default detail level
+        <select id="prefDetail"><option value="quick">Quick</option><option value="catchup">Catch-up</option><option value="detailed">Detailed</option></select></label>
+      <label class="field">Default difficulty
+        <select id="prefDifficulty"><option>beginner</option><option>intermediate</option><option>advanced</option><option>expert</option></select></label>
+      <h3>Privacy &amp; retention</h3>
+      <label class="field">Delete meetings after (days, 0 = keep) <input id="prefRetention" type="number" min="0" max="3650"></label>
+      <label class="check"><input type="checkbox" id="prefPrivate"> Use private mode by default</label>
+      <h3>Automatic meeting mode</h3>
+      <label class="check"><input type="checkbox" id="prefAuto"> Start capturing automatically when I join a Google Meet call, and stop with a final summary when I leave</label>
+      <label class="check"><input type="checkbox" id="prefAutoCC"> Switch Meet captions on automatically if they are off</label>
+      <label class="check"><input type="checkbox" id="prefAudioBackup"> Also record the meeting tab's audio as a backup (Whisper fills in what captions miss; works even without captions)</label>
+      <p class="muted small">Chrome only lets you open the side panel yourself — MeetBrief shows a REC badge and a notification you can click.</p>
+      <div class="controls"><button id="savePrefs" class="btn primary small">Save preferences</button><span id="prefsStatus" class="muted small"></span></div>
+      <div id="consentOut" class="card small"></div>
+      <h3>Danger zone</h3>
+      <div class="controls">
+        <button id="deleteTranscriptBtn" class="btn small danger">Delete this transcript</button>
+        <button id="deleteMeetingBtn" class="btn small danger">Delete this meeting</button>
+        <button id="deleteAllBtn" class="btn small danger">Delete all data</button>
+      </div>
+      <h3>NLP models</h3>
+      <div id="modelsOut" class="card small"></div>
+      <h3>Status (raw)</h3>
+      <pre id="healthOut" class="health"></pre>
+    </section>
+  </main>
+
+  <div id="toast" class="toast" role="status" hidden></div>
+  <script src="../lib/identity.js"></script>
+  <script src="api.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

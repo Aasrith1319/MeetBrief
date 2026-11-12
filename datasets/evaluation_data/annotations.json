@@ -1,0 +1,73 @@
+{
+  "_note": "Hand-annotated gold labels for the MeetBrief sample transcripts (written by the project author). These transcripts are synthetic and small; they are a controlled regression set, not evidence of real-world accuracy. Use public corpora (AMI, ICSI, QMSum) via run_eval.py --qmsum for broader measurement.",
+  "meetings": [
+    {
+      "file": "demo_indexing.txt",
+      "decisions": [{"status": "confirmed", "keywords": ["indexing", "first"]}],
+      "proposals": [{"keywords": ["indexing", "columns"]}, {"keywords": ["caching"]}],
+      "tasks": [{"keywords": ["indexing", "changes"], "owner": "Priya", "deadline": "Friday"}],
+      "unresolved_questions": [],
+      "qa": [
+        {"q": "Why did the team choose indexing first?", "expect": "ABSTAIN"},
+        {"q": "Who will complete the indexing changes?", "expect": ["Priya"]},
+        {"q": "When are the indexing changes due?", "expect": ["Friday"]},
+        {"q": "What did Arjun suggest?", "expect": ["caching"]},
+        {"q": "What is the marketing budget?", "expect": "ABSTAIN"}
+      ],
+      "reference_summary": "The application's response time is a problem because database queries are slow. Priya suggested indexing frequently queried columns and Arjun suggested caching. Rahul decided to implement indexing first and benchmark it before adding caching. Priya will complete the indexing changes by Friday."
+    },
+    {
+      "file": "sprint_planning.txt",
+      "decisions": [
+        {"status": "confirmed", "keywords": ["lazy", "loading"]},
+        {"status": "superseded", "keywords": ["release", "friday"]},
+        {"status": "confirmed", "keywords": ["postpone", "tuesday"]},
+        {"status": "confirmed", "keywords": ["migrate", "postgresql"]}
+      ],
+      "proposals": [{"keywords": ["lazy", "loading", "payment"]}, {"keywords": ["address", "validation"]}, {"keywords": ["not", "release"]}],
+      "tasks": [
+        {"keywords": ["lazy", "loading"], "owner": "Karthik", "deadline": "Wednesday"},
+        {"keywords": ["performance", "metrics"], "owner": "Karthik", "deadline": "unspecified"},
+        {"keywords": ["android", "crash"], "owner": "David", "deadline": "today"},
+        {"keywords": ["release", "notes"], "owner": "unknown", "deadline": "unspecified"},
+        {"keywords": ["rollback", "plan"], "owner": "Sana", "deadline": "next Monday"}
+      ],
+      "unresolved_questions": [["payment", "providers"], ["release", "notes"]],
+      "qa": [
+        {"q": "Why did we go with lazy loading first?", "expect": ["smallest change"]},
+        {"q": "When is the 2.4 release now?", "expect": ["Tuesday"]},
+        {"q": "Who will write the rollback plan?", "expect": ["Sana"]},
+        {"q": "Who is going to update the release notes?", "expect": ["no owner", "unknown", "not explicitly stated"]},
+        {"q": "What is the Android crash rate?", "expect": ["3 percent"]},
+        {"q": "How long will the migration downtime be?", "expect": ["20 minutes"]},
+        {"q": "Which payment providers are used most often?", "expect": "ABSTAIN"},
+        {"q": "What color will the new checkout button be?", "expect": "ABSTAIN"}
+      ],
+      "reference_summary": "The payment page takes almost six seconds to load, causing checkout abandonment. Karthik proposed lazy loading payment provider scripts and Sana proposed moving address validation to the backend. Meera decided to lazy load the payment scripts first because it is the smallest change with the biggest impact; Karthik will implement it by Wednesday and add performance metrics. The 2.4 mobile release planned for Friday was postponed to next Tuesday because the Android crash rate is still 3 percent; David will investigate the crash reports today. Someone needs to update the release notes, but no owner was named. The team agreed to migrate the orders table to PostgreSQL this quarter; Sana will write a rollback plan by next Monday, and downtime is expected to be around 20 minutes. Which payment providers are used most is still unresolved."
+    },
+    {
+      "file": "unlabeled_speakers.vtt",
+      "decisions": [{"status": "confirmed", "keywords": ["three", "emails"]}],
+      "proposals": [{"keywords": ["three", "emails", "week"]}],
+      "tasks": [{"keywords": ["email", "copy"], "owner": "Speaker 2", "deadline": "Friday"}],
+      "unresolved_questions": [["tool"]],
+      "qa": [
+        {"q": "Who will draft the email copy?", "expect": ["Speaker 2"]},
+        {"q": "What tool will send the emails?", "expect": "ABSTAIN"}
+      ],
+      "reference_summary": "The team needed a decision on the onboarding email sequence. Speaker 2 suggested three emails over the first week and Speaker 1 agreed. Speaker 2 will draft the email copy by Friday. The sending tool is still undecided."
+    },
+    {
+      "file": "mixed_hinglish.txt",
+      "decisions": [{"status": "confirmed", "keywords": ["token", "expiry", "24"]}],
+      "proposals": [],
+      "tasks": [{"keywords": ["fix"], "owner": "Rohit", "deadline": "tomorrow"}],
+      "unresolved_questions": [],
+      "qa": [
+        {"q": "Who will deploy the fix?", "expect": ["Rohit"]},
+        {"q": "What is the token expiry going to be?", "expect": ["24 hours"]}
+      ],
+      "reference_summary": "The login bug happens because the session token expires too quickly. Ananya decided to increase the token expiry to 24 hours and Rohit will deploy the fix by tomorrow. Dark mode for the dashboard is postponed until the MVP is complete."
+    }
+  ]
+}

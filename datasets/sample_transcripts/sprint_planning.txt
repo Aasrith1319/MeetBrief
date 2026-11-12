@@ -1,0 +1,22 @@
+[00:00:05] Meera: Good morning everyone. Let's get started with sprint planning for the checkout redesign.
+[00:00:21] Meera: First item is the payment page. Customers are abandoning checkout because the page takes almost six seconds to load.
+[00:00:48] Karthik: The main issue is that we load all the payment provider scripts up front. I suggest lazy loading them only when the user selects a payment method.
+[00:01:15] Sana: We could also move the address validation to the backend, since it currently blocks rendering.
+[00:01:40] Meera: Let's go with lazy loading the payment scripts first, because it is the smallest change with the biggest impact.
+[00:02:02] Meera: Karthik, please implement the lazy loading by Wednesday.
+[00:02:10] Karthik: Sure, I'll also add performance metrics to the dashboard.
+[00:02:31] Sana: Do we know which payment providers are used most often?
+[00:02:45] Karthik: I'm not sure, let's come back to that once we have the analytics data.
+[00:03:10] Meera: Moving on to the mobile app release. The plan is to release version 2.4 on Friday.
+[00:03:32] David: The crash rate on Android is still at 3 percent after the last build.
+[00:03:50] David: I think we should not release with that crash rate.
+[00:04:12] Meera: Actually, let's postpone the 2.4 release to next Tuesday instead, so David has time to fix the Android crash.
+[00:04:30] David: I will investigate the Android crash reports today.
+[00:04:51] Sana: Who is going to update the release notes?
+[00:05:05] Meera: Someone needs to update the release notes before the release.
+[00:05:20] Meera: Next topic is the database migration. We agreed to migrate the orders table to PostgreSQL this quarter.
+[00:05:44] Karthik: The migration script needs a rollback plan.
+[00:06:02] Sana: Sana will write the rollback plan by next Monday.
+[00:06:20] David: How long will the migration downtime be?
+[00:06:31] Karthik: Probably around 20 minutes if we run it at night.
+[00:06:55] Meera: OK, that's everything. Thanks everyone.

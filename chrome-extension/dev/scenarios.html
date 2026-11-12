@@ -1,0 +1,206 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>Scenarios</title></head>
+<body>
+<!-- End-to-end scenario simulator: every member is the REAL background.js (member.html) against a test backend
+     started with MEETBRIEF_ROOMS_DEV_AUTH=1. Some scenarios need time to pass; those are split into steps and the
+     runner ages the database between steps. -->
+<pre id="out"></pre>
+<script>
+  const API = new URLSearchParams(location.search).get("api") || "http://127.0.0.1:8002";
+  const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+  const R = [];
+  const ok = (scenario, label, cond, extra) => R.push([scenario, label, !!cond, extra === undefined ? "" : String(extra).slice(0, 140)]);
+  const info = (code, extra = {}) => ({ meetingKey: `google_meet:${code}`, platform: "Google Meet", platformId: "google_meet",
+    title: code, url: `https://meet.google.com/${code}`, captionsVisible: true, inMeeting: true, ...extra });
+  const seg = (text, speaker, t = 0) => ({ text, speaker_name: speaker, start_time: t, end_time: t + 3 });
+
+  async function member(name, email, { token = null, denyCapture = false } = {}) {
+    const f = document.createElement("iframe");
+    f.src = `member.html?name=${encodeURIComponent(name)}&email=${encodeURIComponent(email)}&api=${encodeURIComponent(API)}`;
+    await new Promise((r) => { f.onload = r; document.body.appendChild(f); });
+    const w = f.contentWindow;
+    w.off = [];                       // offscreen (tab-audio recorder) messages
+    w.deny = denyCapture;
+    const orig = w.chrome.runtime.sendMessage;
+    w.chrome.runtime.sendMessage = async (m) => {
+      if (m.target === "offscreen") { w.off.push({ type: m.type, url: m.uploadUrl }); return { ok: true }; }
+      return orig(m);
+    };
+    w.chrome.tabCapture.getMediaStreamId = async () => { if (w.deny) throw new Error("Extension has not been invoked for the current page"); return "stream"; };
+    if (token) await w.chrome.storage.local.set({ token });
+    w.notes = () => w.log.filter((l) => l[0] === "notify").map((l) => `${l[2]} — ${l[4] || ""}`);
+    w.closeTab = async () => { for (const fn of w.__listeners().tabRemoved) await fn(1); };
+    return w;
+  }
+  const api = async (path, opts = {}, who = null) => {
+    const h = { "Content-Type": "application/json", ...(who ? { "X-MeetBrief-Dev-User": who } : {}), ...(opts.token ? { "X-MeetBrief-Token": opts.token } : {}) };
+    const r = await fetch(API + path, { method: opts.method || "GET", headers: h, body: opts.body ? JSON.stringify(opts.body) : undefined });
+    return { status: r.status, json: await r.json().catch(() => ({})) };
+  };
+  window.S = {}; // members shared between steps
+
+  // ---------------------------------------------------------------- step 1 (no time travel needed)
+  window.step1 = async function (TOKEN) {
+    // S1 solo user, automatic mode, no identity → local capture + audio backup; leaving builds the final summary
+    await api("/api/preferences", { method: "PUT", token: TOKEN, body: { values: { auto_capture: true, consent_acknowledged: true } } });
+    const solo = await member("", "", { token: TOKEN });
+    await solo.toBackground({ type: "meeting:joined", info: info("sol-oone-aaa") });
+    let st = await solo.state();
+    ok("S1 solo", "captures automatically", String(st.state).startsWith("capturing"), st.state);
+    ok("S1 solo", "no room without identity", !st.room);
+    ok("S1 solo", "audio backup to the meeting", st.audioBackup && solo.off.some((m) => m.type === "offscreen:start" && /\/api\/meetings\//.test(m.url)));
+    ok("S1 solo", "label hints how to enable rooms", /set your name|rooms off/i.test(st.detail || "") || /set your name/i.test(solo.notes().join(" ")), st.detail);
+    const r1 = await solo.toBackground({ type: "segments", segments: [seg("You said we should ship on Friday.", "You")] });
+    ok("S1 solo", "segments accepted", r1 && r1.ok, JSON.stringify(r1));
+    await solo.toBackground({ type: "meeting:left", info: {} });
+    st = await solo.state();
+    ok("S1 solo", "ended + final summary", st.state === "ended" && solo.notes().some((n) => /Meeting ended/.test(n)), st.state);
+    ok("S1 solo", "audio recorder stopped", solo.off.some((m) => m.type === "offscreen:stop"));
+
+    // S2/S11/S16 room: first joiner shares automatically, second stands by
+    const a = await member("Asha", "asha@college.edu"), b = await member("Bala", "bala@college.edu");
+    await a.toBackground({ type: "meeting:joined", info: info("roo-mtwo-bbb") });
+    let as = await a.state();
+    ok("S2 room", "first joiner shares automatically", as.room && as.room.role === "capturer", as.room && as.room.role);
+    ok("S2 room", "first joiner records captions + audio to the room", as.audioBackup && a.off.some((m) => /\/api\/rooms\//.test(m.url || "")));
+    await b.toBackground({ type: "meeting:joined", info: info("roo-mtwo-bbb") });
+    let bs = await b.state();
+    ok("S2 room", "second joiner on standby in the same room", bs.room && bs.room.id === as.room.id && bs.room.role === "standby");
+    ok("S2 room", "standby does not record audio", !b.off.some((m) => m.type === "offscreen:start"));
+    const rs = await a.toBackground({ type: "segments", segments: [seg("Lets use BART for the summaries.", "You"), seg("Bala please test it by Friday.", "Asha")] });
+    ok("S16 names", "capturer segments accepted", rs && rs.ok);
+    const segs = (await api(`/api/meetings/${as.room.meetingId}/segments`, {}, "Bala <bala@college.edu>")).json.segments || [];
+    ok("S16 names", "'You' stored as the capturer's name", segs.length && segs[0].speaker_name === "Asha", segs.map((s) => s.speaker_name).join(","));
+    await a.toBackground({ type: "segments", segments: [seg("Lets use BART for the summaries.", "You")] });
+    const segs2 = (await api(`/api/meetings/${as.room.meetingId}/segments`, {}, "Bala <bala@college.edu>")).json.segments || [];
+    ok("S16 names", "redrawn caption not stored twice", segs2.length === segs.length, `${segs.length}→${segs2.length}`);
+    const st11 = await b.toBackground({ type: "capture:start" });
+    ok("S11 start", "standby pressing Start is told who captures", st11 && /capturing for this room/.test(st11.error || ""), st11 && st11.error);
+    const st11b = await a.toBackground({ type: "capture:start" });
+    ok("S11 start", "capturer pressing Start stays in the room meeting", st11b && st11b.meetingId === as.room.meetingId);
+    const dup = await b.toBackground({ type: "segments", segments: [seg("duplicate from standby", "Bala")] });
+    ok("S2 room", "standby cannot push captions", !(dup && dup.ok));
+
+    // S15 pause / resume / stop with hybrid capture
+    a.off.length = 0;
+    await a.toBackground({ type: "capture:pause" });
+    await a.toBackground({ type: "capture:resume" });
+    ok("S15 controls", "pause + resume reach the audio recorder", a.off.some((m) => m.type === "offscreen:pause") && a.off.some((m) => m.type === "offscreen:resume"));
+    S.a = a; S.b = b; S.roomA = as.room;
+
+    // S3 simultaneous join → one room
+    const c = await member("Chitra", "chitra@college.edu"), d = await member("Dev", "dev@college.edu");
+    await Promise.all([c.toBackground({ type: "meeting:joined", info: info("sim-ulta-ccc") }), d.toBackground({ type: "meeting:joined", info: info("sim-ulta-ccc") })]);
+    await d.toBackground({ type: "room:tick", info: info("sim-ulta-ccc") });
+    await c.toBackground({ type: "room:tick", info: info("sim-ulta-ccc") });
+    const cs = await c.state(), ds = await d.state();
+    ok("S3 simultaneous", "one room for both", cs.room && ds.room && cs.room.id === ds.room.id, `${cs.room && cs.room.id} vs ${ds.room && ds.room.id}`);
+    ok("S3 simultaneous", "exactly one capturer", [cs.room.role, ds.room.role].filter((r) => r === "capturer").length === 1, `${cs.room.role}/${ds.room.role}`);
+
+    // S9 backend down
+    const down = await member("Eve", "eve@college.edu");
+    await down.chrome.storage.local.set({ apiBase: "http://127.0.0.1:8999" });
+    await down.toBackground({ type: "meeting:joined", info: info("dow-nbac-kend") });
+    ok("S9 backend down", "user is told the backend is not running", down.notes().some((n) => /backend is not running/.test(n)));
+    ok("S9 backend down", "on-page label explains it", /Backend not running/.test(down.pageLabel || ""), down.pageLabel);
+
+    // S12 Chrome refuses tab capture from the background → captions continue, the reason is kept, and
+    // "+ Add tab audio" (stream id requested inside the panel click) starts the backup
+    const p = await member("Farah", "farah@college.edu", { denyCapture: true });
+    await p.toBackground({ type: "meeting:joined", info: info("pen-ding-ddd") });
+    let ps = await p.state();
+    ok("S12 audio permission", "captions run while audio waits", String(ps.state).startsWith("capturing") && ps.audioPending);
+    ok("S12 audio permission", "Chrome's reason is shown", /not been invoked/.test(ps.audioError || ""), ps.audioError);
+    await p.toBackground({ type: "capture:get" });
+    ps = await p.state();
+    ok("S12 audio permission", "no silent background retries", !ps.audioBackup && ps.audioPending);
+    const pr = await p.toBackground({ type: "audio:backup", streamId: "panel-stream" });
+    ps = await p.state();
+    ok("S12 audio permission", "+ Add tab audio starts the backup", pr.ok && ps.audioBackup && !ps.audioPending && !ps.audioError, JSON.stringify(pr));
+    // S12b the panel click is refused too (real Chrome) → clicking the toolbar icon grants it and adds the audio
+    const q = await member("Gopi", "gopi@college.edu", { denyCapture: true });
+    await q.toBackground({ type: "meeting:joined", info: info("ico-nclk-ddd") });
+    q.deny = false;                                  // Chrome: the icon click invoked the extension on this tab
+    q.__listeners().actionClick({ id: 1 });
+    await sleep(300);
+    let qs = await q.state();
+    ok("S12 audio permission", "toolbar icon click adds tab audio", qs.audioBackup && !qs.audioPending, qs.audioError);
+    // S12c CC is off (no captions at all) → the icon click still adds tab audio, which then carries the meeting
+    const nc = await member("Hari", "hari@college.edu", { denyCapture: true });
+    await nc.toBackground({ type: "meeting:joined", info: info("noc-apti-ddd") });
+    await nc.toBackground({ type: "capture:status", state: "no_captions", detail: "Turn on captions" });  // caption reader: none seen
+    let ncs = await nc.state();
+    ok("S12 audio permission", "no captions → waits for CC or audio", ncs.state === "no_captions" && ncs.audioPending, ncs.state);
+    nc.deny = false;
+    nc.__listeners().actionClick({ id: 1 });
+    await sleep(300);
+    ncs = await nc.state();
+    ok("S12 audio permission", "icon click with CC off records tab audio", ncs.audioBackup && /tab audio instead/.test(nc.tooltip || ""), nc.tooltip);
+
+    // S13 a second meeting tab while tab audio is already recorded for the first one → captions only there
+    const ivy = await member("", "", { token: TOKEN });
+    await ivy.toBackground({ type: "meeting:joined", info: info("one-reco-rder") });
+    ivy.chrome.tabs.query = async () => [{ id: 2, windowId: 1 }];            // user switches to another meeting tab
+    const r13 = await ivy.toBackground({ type: "capture:start", mode: "captions" });
+    const caps13 = (await ivy.chrome.storage.session.get("captures")).captures;
+    ok("S13 one recorder", "second tab still captures captions", r13 && r13.ok && String(caps13[2].state).startsWith("capturing"), JSON.stringify(r13));
+    ok("S13 one recorder", "first tab keeps the audio recorder", caps13[1].audioBackup && ivy.off.filter((m) => m.type === "offscreen:start").length === 1);
+    ok("S13 one recorder", "second tab explains why there is no audio", /another meeting tab/.test(caps13[2].detail || ""), caps13[2].detail);
+
+    // S18 capturer closes the tab → leaves the room, recorder stops
+    const g = await member("Gita", "gita@college.edu"), h = await member("Hari", "hari@college.edu");
+    await g.toBackground({ type: "meeting:joined", info: info("clo-seta-bbb") });
+    await h.toBackground({ type: "meeting:joined", info: info("clo-seta-bbb") });
+    g.off.length = 0;
+    await g.closeTab();
+    ok("S18 tab closed", "recorder stopped", g.off.some((m) => m.type === "offscreen:stop"));
+    await h.toBackground({ type: "room:tick", info: info("clo-seta-bbb") });
+    const hs = await h.state();
+    ok("S18 tab closed", "other member took over", hs.room && hs.room.role === "capturer" && hs.audioBackup);
+
+    // S6 rejoin from the same tab
+    await h.toBackground({ type: "meeting:left", info: {} });
+    ok("S6 rejoin", "room cleared on leave", !(await h.state()).room);
+    const g2 = await member("Gita", "gita@college.edu");
+    await g2.toBackground({ type: "meeting:joined", info: info("clo-seta-bbb") });   // room ended (last left) → new room
+    await h.toBackground({ type: "meeting:joined", info: info("clo-seta-bbb") });
+    const h2 = await h.state(), g2s = await g2.state();
+    ok("S6 rejoin", "rejoining tab is back in a room with the others", h2.room && g2s.room && h2.room.id === g2s.room.id, `${h2.room && h2.room.role}`);
+    S.g2 = g2; S.h = h;
+
+    document.getElementById("out").textContent = JSON.stringify(R, null, 1);
+    return { results: R.splice(0), roomA: S.roomA.id };
+  };
+
+  // ---------------------------------------------------------------- step 2 (after the runner aged the capturer's heartbeat)
+  window.step2 = async function () {
+    // S5 capturer crashed (no leave, heartbeats stopped > 25 s) → standby takes over at its next heartbeat
+    const { a, b } = S;
+    await b.toBackground({ type: "room:tick", info: info("roo-mtwo-bbb") });
+    const bs = await b.state();
+    ok("S5 crash handover", "standby becomes capturer", bs.room && bs.room.role === "capturer");
+    ok("S5 crash handover", "and records audio", bs.audioBackup && b.off.some((m) => m.type === "offscreen:start"));
+    // the crashed capturer comes back: its next heartbeat demotes it (no duplicate capture)
+    await a.toBackground({ type: "room:tick", info: info("roo-mtwo-bbb") });
+    const as = await a.state();
+    ok("S5 crash handover", "returning old capturer stands by", as.room && as.room.role === "standby" && !as.audioBackup, as.room && as.room.role);
+    // S7 everyone leaves → room ends with final summary
+    await a.toBackground({ type: "meeting:left", info: {} });
+    await b.toBackground({ type: "meeting:left", info: {} });
+    ok("S7 end", "last member leaving builds the final summary", b.notes().some((n) => /Meeting ended/.test(n)));
+    const look = await api(`/api/rooms/lookup?key=google_meet:roo-mtwo-bbb`, {}, "Bala <bala@college.edu>");
+    ok("S7 end", "ended room is not offered again", look.json.exists === false);
+    return R.splice(0);
+  };
+
+  // ---------------------------------------------------------------- step 3 (after the runner aged a live room by 20 min)
+  window.step3 = async function () {
+    // S7b same link reused much later while the old room was left 'active' by crashed browsers → fresh room
+    const z = await member("Zoya", "zoya@college.edu");
+    await z.toBackground({ type: "meeting:joined", info: info("clo-seta-bbb") });
+    const zs = await z.state();
+    ok("S7b reused link", "new meeting gets a fresh room", zs.room && zs.room.role === "capturer" && zs.room.missed < 60, zs.room && zs.room.missed);
+    return R.splice(0);
+  };
+</script>
+</body></html>

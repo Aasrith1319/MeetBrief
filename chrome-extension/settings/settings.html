@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MeetBrief Settings</title>
+  <link rel="stylesheet" href="../sidepanel/styles.css">
+</head>
+<body>
+  <main class="settings-page">
+    <h2>MeetBrief AI — connection</h2>
+    <p class="muted small">Start the backend (<code>python -m backend.main</code>) and paste the API token it prints.
+      Preferences, privacy and retention controls are in the side panel's Settings tab.</p>
+    <label class="field">Backend URL <input id="apiBase" placeholder="http://127.0.0.1:8000"></label>
+    <label class="field">API token <input id="apiToken" type="password"></label>
+    <div class="controls mt8"><button id="save" class="btn primary">Save &amp; test</button><span id="status" class="muted small"></span></div>
+  </main>
+  <script src="../sidepanel/api.js"></script>
+  <script src="settings.js"></script>
+</body>
+</html>

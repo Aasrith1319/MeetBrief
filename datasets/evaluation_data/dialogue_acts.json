@@ -1,0 +1,133 @@
+{
+ "_note": "Sentences from the sample and held-out transcripts, hand-labelled with one dialogue act each.",
+ "items": [
+  [
+   "Okay, we're going to go with the message queue, since it also gives us retries for free.",
+   "decision"
+  ],
+  [
+   "My recommendation is to put a message queue in front of the sender.",
+   "proposal"
+  ],
+  [
+   "Another option would be batching notifications every few seconds.",
+   "proposal"
+  ],
+  [
+   "Agreed, SQS it is.",
+   "decision"
+  ],
+  [
+   "SQS, because we are already on AWS.",
+   "other"
+  ],
+  [
+   "We should move them into the CMS.",
+   "proposal"
+  ],
+  [
+   "Right now every notification is sent synchronously.",
+   "other"
+  ],
+  [
+   "Rajesh, could you write the design doc for the queue integration by the 15th?",
+   "task"
+  ],
+  [
+   "Do we have budget for the CMS licence upgrade?",
+   "question"
+  ],
+  [
+   "Under two seconds at the 95th percentile.",
+   "other"
+  ],
+  [
+   "Theek hai, let's increase the token expiry to 24 hours.",
+   "decision"
+  ],
+  [
+   "సరే, let's add caching to the product API.",
+   "decision"
+  ],
+  [
+   "Let's implement indexing first and benchmark it before adding caching.",
+   "decision"
+  ],
+  [
+   "I suggest indexing frequently queried columns.",
+   "proposal"
+  ],
+  [
+   "The database queries are slow.",
+   "other"
+  ],
+  [
+   "Priya, please complete the indexing changes by Friday.",
+   "task"
+  ],
+  [
+   "We could also consider caching.",
+   "proposal"
+  ],
+  [
+   "Let's go with lazy loading the payment scripts first, because it is the smallest change with the biggest impact.",
+   "decision"
+  ],
+  [
+   "Karthik, please implement the lazy loading by Wednesday.",
+   "task"
+  ],
+  [
+   "Do we know which payment providers are used most often?",
+   "question"
+  ],
+  [
+   "The crash rate on Android is still at 3 percent after the last build.",
+   "other"
+  ],
+  [
+   "Actually, let's postpone the 2.4 release to next Tuesday instead.",
+   "decision"
+  ],
+  [
+   "I will investigate the Android crash reports today.",
+   "task"
+  ],
+  [
+   "Who is going to update the release notes?",
+   "question"
+  ],
+  [
+   "We agreed to migrate the orders table to PostgreSQL this quarter.",
+   "decision"
+  ],
+  [
+   "How long will the migration downtime be?",
+   "question"
+  ],
+  [
+   "I suggest sending three emails over the first week.",
+   "proposal"
+  ],
+  [
+   "I'll draft the email copy by Friday.",
+   "task"
+  ],
+  [
+   "What tool should we use to send them?",
+   "question"
+  ],
+  [
+   "Login bug ka main reason hai session token expire ho raha hai jaldi.",
+   "other"
+  ],
+  [
+   "Omar will check the licence cost with finance before Friday.",
+   "task"
+  ],
+  [
+   "The templates are hard-coded in the service, so every copy change needs a deploy.",
+   "other"
+  ]
+ ]
+}

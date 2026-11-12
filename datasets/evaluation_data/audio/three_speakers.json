@@ -1,0 +1,53 @@
+{
+ "_note": "Synthetic meeting generated with macOS text-to-speech voices (Samantha, Daniel, Rishi). A controlled proxy for ASR (WER) and diarization; not real meeting audio.",
+ "turns": [
+  {
+   "speaker": "Samantha",
+   "text": "We need to reduce the checkout page load time before the holiday sale.",
+   "start": 0.0,
+   "end": 3.81
+  },
+  {
+   "speaker": "Daniel",
+   "text": "The payment scripts are loaded up front, so I suggest lazy loading them.",
+   "start": 4.41,
+   "end": 8.75
+  },
+  {
+   "speaker": "Samantha",
+   "text": "Let's go with lazy loading first because it is the smallest change.",
+   "start": 9.35,
+   "end": 12.9
+  },
+  {
+   "speaker": "Rishi",
+   "text": "I will measure the page load time after the change.",
+   "start": 13.5,
+   "end": 16.17
+  },
+  {
+   "speaker": "Daniel",
+   "text": "Could we also compress the product images?",
+   "start": 16.77,
+   "end": 19.06
+  },
+  {
+   "speaker": "Samantha",
+   "text": "Yes, Rishi, please compress the images by Friday.",
+   "start": 19.66,
+   "end": 23.1
+  },
+  {
+   "speaker": "Rishi",
+   "text": "Sure, I can do that by Friday.",
+   "start": 23.7,
+   "end": 25.86
+  },
+  {
+   "speaker": "Daniel",
+   "text": "Then I will write the release notes tomorrow.",
+   "start": 26.46,
+   "end": 28.72
+  }
+ ]
+}

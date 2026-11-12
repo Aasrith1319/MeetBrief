@@ -1,0 +1,191 @@
+[
+ {
+  "model": "google/flan-t5-large",
+  "text": "eventual consistency",
+  "style": "simplify",
+  "seconds": 1.4,
+  "output": "\"Eventual consistency\" is a term used in software engineering."
+ },
+ {
+  "model": "google/flan-t5-large",
+  "text": "load balancer",
+  "style": "step_by_step",
+  "seconds": 1.7,
+  "output": "Load balancer is a device that balances the load on a load cell."
+ },
+ {
+  "model": "google/flan-t5-large",
+  "text": "message queue",
+  "style": "example",
+  "seconds": 1.2,
+  "output": "When a user sends a message to a queue, it is placed in the queue."
+ },
+ {
+  "model": "google/flan-t5-large",
+  "text": "rollback plan",
+  "style": "simplify",
+  "seconds": 0.9,
+  "output": "A rollback plan is a plan to reduce the number of bugs in a software system."
+ },
+ {
+  "model": "google/flan-t5-large",
+  "text": "sharding",
+  "style": "simplify",
+  "seconds": 0.8,
+  "output": "Sharding is a technique used to reduce the size of a file."
+ },
+ {
+  "model": "google/flan-t5-large",
+  "text": "rate limiting",
+  "style": "analogy",
+  "seconds": 1.1,
+  "output": "Rate limiting refers to limiting the rate at which a flow of liquid or gas is moving."
+ },
+ {
+  "model": "google/flan-t5-large",
+  "text": "technical debt",
+  "style": "analogy",
+  "seconds": 1.3,
+  "output": "Technical debt is a term used in finance to describe a person 's indebtedness to a company ."
+ },
+ {
+  "model": "google/flan-t5-large",
+  "text": "p95 latency",
+  "style": "simplify",
+  "seconds": 1.3,
+  "output": "P95 latency is a term used in software to describe the time it takes for a process to complete a task."
+ },
+ {
+  "model": "google/flan-t5-large",
+  "text": "The migration script needs a rollback plan.",
+  "style": "simplify",
+  "seconds": 0.6,
+  "output": "The migration script needs a rollback plan."
+ },
+ {
+  "model": "Qwen/Qwen2.5-0.5B-Instruct",
+  "text": "eventual consistency",
+  "style": "simplify",
+  "seconds": 2.2,
+  "output": "Eventual consistency refers to the property where all parts of a system that interact with each other eventually reach a consistent state after some time has passed. Essentially, it ensures that no matter how many times data changes or processes occur, they will always result in the same outcome. This concept is crucial for maintaining reliability and correctness in systems like databases, programming languages, and computer networks."
+ },
+ {
+  "model": "Qwen/Qwen2.5-0.5B-Instruct",
+  "text": "load balancer",
+  "style": "step_by_step",
+  "seconds": 5.7,
+  "output": "1. **Identify the Problem**: The first step is to understand that there might be multiple servers or instances running on your network that need to handle traffic from different users.\n\n2. **Choose the Right Load Balancer**: There are several types of load balancers available such as Round Robin, Least Connections, Weighted Round Robin, and Application Load Balancing (ALB). Each has its own strengths and weaknesses depending on the specific needs of your application.\n\n3. **Configure the Load Balancer**: This involves setting up the load balancer in your network configuration. You will typically configure it using tools like Nginx, Apache, or even custom scripts if you're using a server-side technology like PHP or Python.\n\n4. **Assign Traffic**: When a user requests a resource, the load balancer will distribute this request across all configured servers or instances. It does this by assigning each request to"
+ },
+ {
+  "model": "Qwen/Qwen2.5-0.5B-Instruct",
+  "text": "message queue",
+  "style": "example",
+  "seconds": 3.2,
+  "output": "A message queue is a data structure used in computer systems to manage the exchange of messages between different processes or threads. In software technology, it's often employed for tasks like handling I/O operations (like reading from disk), managing database transactions, or processing network requests. For instance, when writing an application that reads data from a file, using a message queue can help manage the flow of data as files are read, ensuring that no process blocks while waiting for input. This allows the main thread to continue executing other tasks without being blocked by I/O operations."
+ },
+ {
+  "model": "Qwen/Qwen2.5-0.5B-Instruct",
+  "text": "rollback plan",
+  "style": "simplify",
+  "seconds": 2.2,
+  "output": "A rollback plan refers to a strategy or method for restoring an application or system to its previous state before a change was made. It's like having a backup set of files that can be used if the original data gets corrupted or deleted during a software update or upgrade process. This ensures that users don't lose any work they've done by reverting back to their initial setup."
+ },
+ {
+  "model": "Qwen/Qwen2.5-0.5B-Instruct",
+  "text": "sharding",
+  "style": "simplify",
+  "seconds": 1.9,
+  "output": "Sharding in software or technology refers to dividing data into smaller, more manageable pieces (shards) across multiple servers or databases. This allows for better scalability by distributing the load evenly among available resources rather than having all shards on one server. It's useful when dealing with large datasets that can't fit entirely on a single machine."
+ },
+ {
+  "model": "Qwen/Qwen2.5-0.5B-Instruct",
+  "text": "rate limiting",
+  "style": "analogy",
+  "seconds": 2.7,
+  "output": "Rate limiting in the context of reading can be likened to a traffic light system. Just as traffic lights control the flow of cars on a road by allowing or blocking certain vehicles based on their speed, rate limiting controls the number of articles (or books) that can be read at any given time. The more articles you try to read simultaneously, the slower they will progress through your reading journey. This mechanism helps maintain an optimal pace for efficient learning and enjoyment."
+ },
+ {
+  "model": "Qwen/Qwen2.5-0.5B-Instruct",
+  "text": "technical debt",
+  "style": "analogy",
+  "seconds": 4.2,
+  "output": "Technical debt is like building a house without enough money to buy all the materials needed for it yet. The reader starts out as a young student who has just started their education. As they progress through school, they accumulate more credits but don't have enough funds to purchase all necessary textbooks or other resources required for each class. This accumulation of unpaid debts (or technical debt) can lead to financial difficulties in later years when they need these resources.\n\nIn this analogy:\n- **Building a house** represents learning.\n- **Without enough money** represents having too much technical debt.\n- **Not buying all necessary materials** represents not paying attention to the details that might be crucial for completing the project successfully.\n\nThis analogy helps explain why technical debt can be problematic for"
+ },
+ {
+  "model": "Qwen/Qwen2.5-0.5B-Instruct",
+  "text": "p95 latency",
+  "style": "simplify",
+  "seconds": 1.8,
+  "output": "\"P95 latency\" refers to the average time it takes for data to travel from one end of a network connection to the other, assuming that all devices on the network have equal processing power and bandwidth. This value is often used as an indicator of how fast a network can handle data transfer between two points."
+ },
+ {
+  "model": "Qwen/Qwen2.5-0.5B-Instruct",
+  "text": "The migration script needs a rollback plan.",
+  "style": "simplify",
+  "seconds": 0.5,
+  "output": "\"An important part of the script needs to be changed back later.\""
+ },
+ {
+  "model": "Qwen/Qwen2.5-1.5B-Instruct",
+  "text": "eventual consistency",
+  "style": "simplify",
+  "seconds": 5.0,
+  "output": "Eventual consistency refers to a database system's ability to achieve near-real-time data availability despite asynchronous updates from multiple nodes. It allows for temporary inconsistencies while the system converges on a final state. This approach balances performance with eventual accuracy, making it suitable for distributed systems where immediate consistency isn't always necessary or possible."
+ },
+ {
+  "model": "Qwen/Qwen2.5-1.5B-Instruct",
+  "text": "load balancer",
+  "style": "step_by_step",
+  "seconds": 15.1,
+  "output": "1. **Receive Requests**: The load balancer receives requests from clients (like web browsers or mobile apps) that want to access the server.\n\n2. **Distribute Requests**: It then distributes these incoming requests across multiple servers in its pool. This ensures that no single server becomes overloaded with too many requests at once.\n\n3. **Monitor Performance**: The load balancer continuously monitors each server’s performance and availability. If one server fails or slows down significantly, it can quickly redirect traffic away from that server and towards another healthy server.\n\n4. **Route Traffic**: Based on predefined rules or algorithms, the load balancer decides which server should handle each request. These rules might include factors like server capacity, response time, or even simple round-robin scheduling where requests are distributed among all available servers.\n\n5. **Serve Responses**: Once a request has been routed to an appropriate server, that server processes the request and"
+ },
+ {
+  "model": "Qwen/Qwen2.5-1.5B-Instruct",
+  "text": "message queue",
+  "style": "example",
+  "seconds": 11.4,
+  "output": "A message queue is a system that allows different parts of an application to communicate with each other without directly interacting. Here's a simple example for beginners:\n\n1. Imagine you're building a chat app where users can send messages to each other. Each user has their own inbox (a queue) where they receive incoming messages from others.\n\n2. When a user sends a new message, it goes into the user's inbox queue. The server then processes this message by sending it to all other users who have requested to be notified about new messages from that sender.\n\n3. This way, multiple users don't need to know about each other or share direct communication channels; they just listen to the queue for updates on messages sent by specific users.\n\n4. As"
+ },
+ {
+  "model": "Qwen/Qwen2.5-1.5B-Instruct",
+  "text": "rollback plan",
+  "style": "simplify",
+  "seconds": 5.8,
+  "output": "A rollback plan in technology refers to a strategy or set of steps that allows for undoing changes made by developers when they realize those changes were incorrect or caused problems. It's like having an emergency stop button on your computer system that can revert the system back to its previous state if something goes wrong. This helps maintain data integrity and prevent users from losing work unintentionally."
+ },
+ {
+  "model": "Qwen/Qwen2.5-1.5B-Instruct",
+  "text": "sharding",
+  "style": "simplify",
+  "seconds": 6.1,
+  "output": "Sharding is a technique used in distributed databases to split large datasets into smaller, manageable pieces called shards. Each shard contains data for a subset of the overall dataset. Shards can be stored on different servers or nodes within a network, allowing for parallel processing and improved scalability. This method helps manage complexity by distributing data across multiple locations, making it easier to handle large volumes of data efficiently."
+ },
+ {
+  "model": "Qwen/Qwen2.5-1.5B-Instruct",
+  "text": "rate limiting",
+  "style": "analogy",
+  "seconds": 8.4,
+  "output": "Rate limiting can be thought of as a traffic light system in a busy intersection. Just like a red light stops cars from entering until it turns green, rate limiting slows down processes or events that happen too quickly for efficiency. In this case, imagine if all vehicles had to stop at a single signal before proceeding; none could move forward without waiting. Similarly, when something happens too fast (like spam emails arriving), rate limiting ensures that only certain types or quantities pass through, preventing overloading systems. This helps maintain smooth operation by managing flow efficiently."
+ },
+ {
+  "model": "Qwen/Qwen2.5-1.5B-Instruct",
+  "text": "technical debt",
+  "style": "analogy",
+  "seconds": 7.3,
+  "output": "Imagine building a house without planning: it's easy at first but becomes increasingly difficult as more rooms are added. This is like technical debt in software development - adding features quickly can lead to problems later if not managed properly.\nIn this analogy:\n- Planning (design) represents understanding requirements and architecture upfront.\n- Adding rooms (features) represents making changes incrementally over time.\n- Difficulty (problems) arises when trying to add too many rooms without proper planning or maintenance."
+ },
+ {
+  "model": "Qwen/Qwen2.5-1.5B-Instruct",
+  "text": "p95 latency",
+  "style": "simplify",
+  "seconds": 5.1,
+  "output": "P95 latency refers to the time it takes for data to travel from one point to another in a system or network, where 95% of all such trips take less than this amount of time. It's often used as an indicator of performance bottlenecks in systems like servers or networks."
+ },
+ {
+  "model": "Qwen/Qwen2.5-1.5B-Instruct",
+  "text": "The migration script needs a rollback plan.",
+  "style": "simplify",
+  "seconds": 9.1,
+  "output": "To simplify the sentence for a beginner:\n\"Sometimes when we make changes to our program, we need to be able to undo those changes if something goes wrong.\"\nThis explanation breaks down the original technical language into more accessible terms while maintaining the core meaning.\nIn three short sentences:\n1. The migration script (a computer program) might sometimes break or cause problems.\n2. To fix these issues, there should be a way to go back to how things were before the change was made.\n3. This ability to revert to an earlier state is called a rollback plan."
+ }
+]

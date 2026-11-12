@@ -1,0 +1,3 @@
+# Meeting-tab audio transcription (Whisper via faster-whisper; model weights from Hugging Face on first use)
+faster-whisper>=1.0
+av>=12

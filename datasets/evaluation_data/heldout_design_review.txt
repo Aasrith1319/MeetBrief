@@ -1,0 +1,20 @@
+[00:00:03] Tanvi: Thanks for joining the design review for the notifications service.
+[00:00:15] Tanvi: Right now every notification is sent synchronously, and during peak hours the API times out.
+[00:00:40] Rajesh: My recommendation is to put a message queue in front of the sender.
+[00:01:02] Elena: Another option would be batching notifications every few seconds.
+[00:01:30] Tanvi: Okay, we're going to go with the message queue, since it also gives us retries for free.
+[00:01:52] Rajesh: Which queue should we use, RabbitMQ or SQS?
+[00:02:10] Elena: SQS, because we are already on AWS.
+[00:02:25] Tanvi: Agreed, SQS it is.
+[00:02:40] Tanvi: Rajesh, could you write the design doc for the queue integration by the 15th?
+[00:02:58] Rajesh: Yes, I can do that.
+[00:03:20] Elena: I'll set up the SQS staging environment this week.
+[00:03:45] Tanvi: Let's also talk about email templates.
+[00:04:02] Omar: The templates are hard-coded in the service, so every copy change needs a deploy.
+[00:04:30] Omar: We should move them into the CMS.
+[00:04:48] Tanvi: Do we have budget for the CMS licence upgrade?
+[00:05:05] Omar: I don't know, I'll need to check with finance.
+[00:05:30] Tanvi: Omar will check the licence cost with finance before Friday.
+[00:05:50] Elena: Also, what is our target latency for push notifications?
+[00:06:05] Tanvi: Under two seconds at the 95th percentile.
+[00:06:30] Tanvi: Great, thanks everyone, see you next week.

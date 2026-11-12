@@ -1,0 +1,45 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>Caption Harness</title></head>
+<body>
+<!-- Developer harness: simulates Google Meet's caption DOM (progressive updates, ASR rewrites,
+     speaker changes) and runs the real adapter + CaptionCapture against it. Not packaged logic. -->
+<div role="region" aria-label="Captions" id="cc"></div>
+<pre id="out"></pre>
+<script>
+  // minimal chrome shim so content scripts load outside the extension
+  window.chrome = window.chrome || {};
+</script>
+<script src="../content/platform_adapters/base.js"></script>
+<script src="../content/platform_adapters/google_meet.js"></script>
+<script src="../content/caption_capture.js"></script>
+<script>
+const cc = document.getElementById("cc");
+const emitted = [];
+function block(name) {
+  const b = document.createElement("div"); b.className = "nMcdL";
+  b.innerHTML = `<div class="KcIKyf"></div><div class="ygicle"></div>`;
+  b.querySelector(".KcIKyf").textContent = name; cc.appendChild(b); return b;
+}
+const setText = (b, t) => { b.querySelector(".ygicle").textContent = t; };
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+window.runHarness = async function () {
+  const adapter = MeetBriefAdapters.detect({ hostname: "meet.google.com", pathname: "/abc-defg-hij" });
+  const cap = new MeetBriefCaptionCapture(adapter, { onSegments: (s) => emitted.push(...s) });
+  cap.start();
+  const a = block("Rahul");
+  for (const t of ["We need", "We need to improve", "We need to improve the application's response time."]) { setText(a, t); await sleep(300); }
+  await sleep(2300); // stable -> emitted
+  setText(a, "We need to improve the application's response time. Also the dashboard");  // same block keeps growing
+  await sleep(300);
+  setText(a, "We need to improve the application's response time. Also the dashboard is slow.");
+  const b = block("Priya");
+  for (const t of ["The database", "The data base queries", "The database queries are slow."]) { setText(b, t); await sleep(300); } // ASR rewrite
+  await sleep(2300);
+  a.remove(); b.remove();  // captions scroll away
+  await sleep(1000);
+  cap.stop();
+  document.getElementById("out").textContent = JSON.stringify(emitted, null, 1);
+  return emitted;
+};
+</script>
+</body></html>

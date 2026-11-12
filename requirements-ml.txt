@@ -1,0 +1,8 @@
+# Local Hugging Face models (summarization, translation, QA, embeddings, NLI, NER, speaker embeddings).
+# All inference runs on this machine; see backend/hf/models.py for the model list.
+torch>=2.4
+transformers>=4.45
+sentence-transformers>=3.0
+sentencepiece>=0.2
+protobuf>=4.25
+huggingface-hub>=0.24

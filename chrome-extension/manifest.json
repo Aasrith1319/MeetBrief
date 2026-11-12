@@ -1,0 +1,75 @@
+{
+  "manifest_version": 3,
+  "name": "MeetBrief AI",
+  "version": "1.5.1",
+  "description": "Multilingual, context-aware meeting assistant: catch-up summaries, Explain Again, evidence-linked Q&A, decisions and action items.",
+  "minimum_chrome_version": "116",
+  "icons": {
+    "16": "icons/icon16.png",
+    "32": "icons/icon32.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "action": {
+    "default_title": "Open MeetBrief AI",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "32": "icons/icon32.png"
+    }
+  },
+  "side_panel": {
+    "default_path": "sidepanel/index.html"
+  },
+  "options_page": "settings/settings.html",
+  "background": {
+    "service_worker": "background.js"
+  },
+  "permissions": [
+    "sidePanel",
+    "storage",
+    "tabCapture",
+    "offscreen",
+    "contextMenus",
+    "activeTab",
+    "notifications",
+    "identity",
+    "alarms",
+    "scripting"
+  ],
+  "host_permissions": [
+    "http://127.0.0.1/*",
+    "http://localhost/*"
+  ],
+  "content_scripts": [
+    {
+      "matches": [
+        "https://meet.google.com/*",
+        "https://*.zoom.us/wc/*",
+        "https://app.zoom.us/*",
+        "https://teams.microsoft.com/*",
+        "https://teams.live.com/*"
+      ],
+      "js": [
+        "content/platform_adapters/base.js",
+        "content/platform_adapters/google_meet.js",
+        "content/platform_adapters/zoom_web.js",
+        "content/platform_adapters/teams_web.js",
+        "content/caption_capture.js",
+        "content/meeting_detector.js"
+      ],
+      "run_at": "document_idle"
+    }
+  ],
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'self'; connect-src 'self' http: https:"
+  },
+  "commands": {
+    "add-tab-audio": {
+      "suggested_key": {
+        "default": "Alt+Shift+A",
+        "mac": "Alt+Shift+A"
+      },
+      "description": "Add this meeting tab's audio to MeetBrief"
+    }
+  }
+}

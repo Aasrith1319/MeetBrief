@@ -1,0 +1,5 @@
+11:00 — Sravani: "అందరికీ నమస్కారం. ఈరోజు మనం API performance గురించి మాట్లాడదాం."
+11:02 — Venkat: "Response time చాలా slow గా ఉంది. Caching add చేస్తే బాగుంటుంది."
+11:04 — Sravani: "సరే, let's add caching to the product API."
+11:05 — Sravani: "Venkat, please complete the caching changes by Thursday."
+11:06 — Venkat: "Sure, nenu Thursday lopala chestanu."

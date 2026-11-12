@@ -1,0 +1,6 @@
+10:00 — Ananya: "Okay team, aaj ka agenda hai login bug aur dashboard ka design."
+10:01 — Rohit: "Login bug ka main reason hai session token expire ho raha hai jaldi."
+10:03 — Ananya: "Theek hai, let's increase the token expiry to 24 hours."
+10:04 — Rohit: "Main kal tak fix kar dunga. I'll deploy the fix by tomorrow."
+10:06 — Kavya: "Dashboard design ke liye kya hum dark mode bhi add karenge?"
+10:07 — Ananya: "Abhi nahi, pehle MVP complete karna hai."

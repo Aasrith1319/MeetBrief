@@ -1,0 +1,1190 @@
+{
+  "sets": {
+    "development": {
+      "rules": {
+        "config": "rules only",
+        "decisions": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "tp": 7,
+          "fp": 0,
+          "fn": 0
+        },
+        "revision_accuracy": "1/1",
+        "proposals": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "tp": 6,
+          "fp": 0,
+          "fn": 0
+        },
+        "tasks": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "tp": 8,
+          "fp": 0,
+          "fn": 0
+        },
+        "owner_acc": 1.0,
+        "deadline_acc": 1.0,
+        "unresolved_questions": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "tp": 3,
+          "fp": 0,
+          "fn": 0
+        },
+        "qa_answer_acc": "12/12",
+        "qa_abstain_acc": "5/5",
+        "rouge": {
+          "summary_rouge1": 0.382,
+          "summary_rougeL": 0.314,
+          "overview_rouge1": 0.449,
+          "overview_rouge2": 0.327,
+          "overview_rougeL": 0.425
+        },
+        "abstractive_sentences_supported": null,
+        "latency_ms": {
+          "analyze_ms": 248.4,
+          "summary_ms": 0.7,
+          "qa_ms": 3.5
+        },
+        "qa_log": [
+          {
+            "meeting": "demo_indexing.txt",
+            "question": "Why did the team choose indexing first?",
+            "expected": "ABSTAIN",
+            "correct": true,
+            "engine": "retrieval + rules",
+            "answer": "The transcript records the relevant statement — Rahul (10:06:00): “Let's implement indexing first and benchmark it before adding caching.” [S4-d7d187] — but the reason was not explicitly stated. I won't guess a rationale. Related context (n"
+          },
+          {
+            "meeting": "demo_indexing.txt",
+            "question": "Who will complete the indexing changes?",
+            "expected": [
+              "Priya"
+            ],
+            "correct": true,
+            "engine": "retrieval + rules",
+            "answer": "Priya — “Complete the indexing changes”, due Friday. [S5-73a044]"
+          },
+          {
+            "meeting": "demo_indexing.txt",
+            "question": "When are the indexing changes due?",
+            "expected": [
+              "Friday"
+            ],
+            "correct": true,
+            "engine": "retrieval + rules",
+            "answer": "“Complete the indexing changes” is due Friday (owner: Priya). [S5-73a044]"
+          },
+          {
+            "meeting": "demo_indexing.txt",
+            "question": "What did Arjun suggest?",
+            "expected": [
+              "caching"
+            ],
+            "correct": true,
+            "engine": "retrieval + rules",
+            "answer": "According to the transcript, Arjun (10:04:00): “We could also consider caching.” [S3-2acc82]"
+          },
+          {
+            "meeting": "demo_indexing.txt",
+            "question": "What is the marketing budget?",
+            "expected": "ABSTAIN",
+            "correct": true,
+            "engine": "retrieval + rules",
+            "answer": "I couldn't find anything about this in the captured transcript, so I can't answer it reliably."
+          },
+          {
+            "meeting": "sprint_planning.txt",
+            "question": "Why did we go with lazy loading first?",
+            "expected": [
+              "smallest change"
+            ],
+            "correct": true,
+            "engine": "retrieval + rules",
+            "answer": "The transcript gives this reason: Meera (01:40): “Let's go with lazy loading the payment scripts first, because it is the smallest change with the biggest impact.” [S5-4669fc]"
+          },
+          {
+            "meeting": "sprint_planning.txt",
+            "question": "When is the 2.4 release now?",
+            "expected": [
+              "Tuesday"
+            ],
+            "correct": true,
+            "engine": "retrieval + rules",
+            "answer": "Based on the transcript: Meera (03:10): “Moving on to the mobile app release. The plan is to release version 2.4 on Friday.” [S10-024b4e] Meera (04:12): “Actually, let's postpone the 2.4 release to next Tuesday instead, so David has time to"
+          },
+          {
+            "meeting": "sprint_planning.txt",
+            "question": "Who will write the rollback plan?",
+            "expected": [
+              "Sana"
+            ],
+            "correct": true,
+            "engine": "retrieval + rules",
+            "answer": "Sana — “Write the rollback plan”, due next Monday. [S19-f46f8b]"
+          },
+          {
+            "meeting": "sprint_planning.txt",
+            "question": "Who is going to update the release notes?",
+            "expected": [
+              "no owner",
+              "unknown",
+              "not explicitly stated"
+            ],
+            "correct": true,
+            "engine": "retrieval + rules",
+            "answer": "The task “Update the release notes before the release” was mentioned, but no owner was explicitly stated. [S16-3ee073]"
+          },
+          {
+            "meeting": "sprint_planning.txt",
+            "question": "What is the Android crash rate?",
+            "expected": [
+              "3 percent"
+            ],
+            "correct": true,
+            "engine": "retrieval + rules",
+            "answer": "Based on the transcript: David (03:32): “The crash rate on Android is still at 3 percent after the last build.” [S11-a47ba6] David (03:50): “I think we should not release with that crash rate.” [S12-964715] Meera (04:12): “Actually, let's p"
+          },
+          {
+            "meeting": "sprint_planning.txt",
+            "question": "How long will the migration downtime be?",
+            "expected": [
+              "20 minutes"
+            ],
+            "correct": true,
+            "engine": "retrieval + rules",
+            "answer": "David asked this at 06:20 [S20-99b136]; Karthik replied: “Probably around 20 minutes if we run it at night.” [S21-0463dc]"
+          },
+          {
+            "meeting": "sprint_planning.txt",
+            "question": "Which payment providers are used most often?",
+            "expected": "ABSTAIN",
+            "correct": true,
+            "engine": "retrieval + rules",
+            "answer": "This was asked by Sana at 02:31 [S8-88a935], but no clear answer appears in the captured transcript."
+          },
+          {
+            "meeting": "sprint_planning.txt",
+            "question": "What color will the new checkout button be?",
+            "expected": "ABSTAIN",
+            "correct": true,
+            "engine": "retrieval + rules",
+            "answer": "I couldn't find anything about this in the captured transcript, so I can't answer it reliably."
+          },
+          {
+            "meeting": "unlabeled_speakers.vtt",
+            "question": "Who will draft the email copy?",
+            "expected": [
+              "Speaker 2"
+            ],
+            "correct": true,
+            "engine": "retrieval + rules",
+            "answer": "Speaker 2 — “Draft the email copy”, due Friday. [S4-6bb8f8]"
+          },
+          {
+            "meeting": "unlabeled_speakers.vtt",
+            "question": "What tool will send the emails?",
+            "expected": "ABSTAIN",
+            "correct": true,
+            "engine": "retrieval + rules",
+            "answer": "This was asked by Speaker 1 at 00:20 [S5-4c5c90], but no clear answer appears in the captured transcript."
+          },
+          {
+            "meeting": "mixed_hinglish.txt",
+            "question": "Who will deploy the fix?",
+            "expected": [
+              "Rohit"
+            ],
+            "correct": true,
+            "engine": "retrieval + rules",
+            "answer": "Rohit — “Deploy the fix”, due tomorrow. [S4-4cb09f]"
+          },
+          {
+            "meeting": "mixed_hinglish.txt",
+            "question": "What is the token expiry going to be?",
+            "expected": [
+              "24 hours"
+            ],
+            "correct": true,
+            "engine": "retrieval + rules",
+            "answer": "Based on the transcript: Ananya (10:03:00): “Theek hai, let's increase the token expiry to 24 hours.” [S3-e862a9] Rohit (10:01:00): “Login bug ka main reason hai session token expire ho raha hai jaldi.” [S2-45d818]"
+          }
+        ]
+      },
+      "models": {
+        "config": "hugging-face models",
+        "decisions": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "tp": 7,
+          "fp": 0,
+          "fn": 0
+        },
+        "revision_accuracy": "1/1",
+        "proposals": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "tp": 6,
+          "fp": 0,
+          "fn": 0
+        },
+        "tasks": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "tp": 8,
+          "fp": 0,
+          "fn": 0
+        },
+        "owner_acc": 1.0,
+        "deadline_acc": 1.0,
+        "unresolved_questions": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "tp": 3,
+          "fp": 0,
+          "fn": 0
+        },
+        "qa_answer_acc": "12/12",
+        "qa_abstain_acc": "5/5",
+        "rouge": {
+          "summary_rouge1": 0.348,
+          "summary_rougeL": 0.275,
+          "overview_rouge1": 0.555,
+          "overview_rouge2": 0.336,
+          "overview_rougeL": 0.405
+        },
+        "abstractive_sentences_supported": "12/12",
+        "latency_ms": {
+          "analyze_ms": 1312.9,
+          "summary_ms": 5477.7,
+          "qa_ms": 111.7
+        },
+        "qa_log": [
+          {
+            "meeting": "demo_indexing.txt",
+            "question": "Why did the team choose indexing first?",
+            "expected": "ABSTAIN",
+            "correct": true,
+            "engine": "retrieval + rules",
+            "answer": "The transcript records the relevant statement — Rahul (10:06:00): “Let's implement indexing first and benchmark it before adding caching.” [S4-d7d187] — but the reason was not explicitly stated. I won't guess a rationale. Related context (n"
+          },
+          {
+            "meeting": "demo_indexing.txt",
+            "question": "Who will complete the indexing changes?",
+            "expected": [
+              "Priya"
+            ],
+            "correct": true,
+            "engine": "retrieval + rules",
+            "answer": "Priya — “Complete the indexing changes”, due Friday. [S5-73a044]"
+          },
+          {
+            "meeting": "demo_indexing.txt",
+            "question": "When are the indexing changes due?",
+            "expected": [
+              "Friday"
+            ],
+            "correct": true,
+            "engine": "retrieval + rules",
+            "answer": "“Complete the indexing changes” is due Friday (owner: Priya). [S5-73a044]"
+          },
+          {
+            "meeting": "demo_indexing.txt",
+            "question": "What did Arjun suggest?",
+            "expected": [
+              "caching"
+            ],
+            "correct": true,
+            "engine": "retrieval + rules",
+            "answer": "According to the transcript, Arjun (10:04:00): “We could also consider caching.” [S3-2acc82]"
+          },
+          {
+            "meeting": "demo_indexing.txt",
+            "question": "What is the marketing budget?",
+            "expected": "ABSTAIN",
+            "correct": true,
+            "engine": "retrieval + rules",
+            "answer": "I couldn't find anything about this in the captured transcript, so I can't answer it reliably."
+          },
+          {
+            "meeting": "sprint_planning.txt",
+            "question": "Why did we go with lazy loading first?",
+            "expected": [
+              "smallest change"
+            ],
+            "correct": true,
+            "engine": "retrieval + rules",
+            "answer": "The transcript gives this reason: Meera (01:40): “Let's go with lazy loading the payment scripts first, because it is the smallest change with the biggest impact.” [S5-4669fc]"
+          },
+          {
+            "meeting": "sprint_planning.txt",
+            "question": "When is the 2.4 release now?",
+            "expected": [
+              "Tuesday"
+            ],
+            "correct": true,
+            "engine": "deepset/roberta-base-squad2",
+            "answer": "**Tuesday** — Meera (04:12): “Actually, let's postpone the 2.4 release to next Tuesday instead, so David has time to fix the Android crash.” [S13-56993d] (Earlier plan: Friday — revised [S10-024b4e].)"
+          },
+          {
+            "meeting": "sprint_planning.txt",
+            "question": "Who will write the rollback plan?",
+            "expected": [
+              "Sana"
+            ],
+            "correct": true,
+            "engine": "retrieval + rules",
+            "answer": "Sana — “Write the rollback plan”, due next Monday. [S19-f46f8b]"
+          },
+          {
+            "meeting": "sprint_planning.txt",
+            "question": "Who is going to update the release notes?",
+            "expected": [
+              "no owner",
+              "unknown",
+              "not explicitly stated"
+            ],
+            "correct": true,
+            "engine": "retrieval + rules",
+            "answer": "The task “Update the release notes before the release” was mentioned, but no owner was explicitly stated. [S16-3ee073]"
+          },
+          {
+            "meeting": "sprint_planning.txt",
+            "question": "What is the Android crash rate?",
+            "expected": [
+              "3 percent"
+            ],
+            "correct": true,
+            "engine": "deepset/roberta-base-squad2",
+            "answer": "**3 percent** — David (03:32): “The crash rate on Android is still at 3 percent after the last build.” [S11-a47ba6]"
+          },
+          {
+            "meeting": "sprint_planning.txt",
+            "question": "How long will the migration downtime be?",
+            "expected": [
+              "20 minutes"
+            ],
+            "correct": true,
+            "engine": "retrieval + rules",
+            "answer": "David asked this at 06:20 [S20-99b136]; Karthik replied: “Probably around 20 minutes if we run it at night.” [S21-0463dc]"
+          },
+          {
+            "meeting": "sprint_planning.txt",
+            "question": "Which payment providers are used most often?",
+            "expected": "ABSTAIN",
+            "correct": true,
+            "engine": "retrieval + rules",
+            "answer": "This was asked by Sana at 02:31 [S8-88a935], but no clear answer appears in the captured transcript."
+          },
+          {
+            "meeting": "sprint_planning.txt",
+            "question": "What color will the new checkout button be?",
+            "expected": "ABSTAIN",
+            "correct": true,
+            "engine": "retrieval + rules",
+            "answer": "I couldn't find anything about this in the captured transcript, so I can't answer it reliably."
+          },
+          {
+            "meeting": "unlabeled_speakers.vtt",
+            "question": "Who will draft the email copy?",
+            "expected": [
+              "Speaker 2"
+            ],
+            "correct": true,
+            "engine": "retrieval + rules",
+            "answer": "Speaker 2 — “Draft the email copy”, due Friday. [S4-6bb8f8]"
+          },
+          {
+            "meeting": "unlabeled_speakers.vtt",
+            "question": "What tool will send the emails?",
+            "expected": "ABSTAIN",
+            "correct": true,
+            "engine": "retrieval + rules",
+            "answer": "This was asked by Speaker 1 at 00:20 [S5-4c5c90], but no clear answer appears in the captured transcript."
+          },
+          {
+            "meeting": "mixed_hinglish.txt",
+            "question": "Who will deploy the fix?",
+            "expected": [
+              "Rohit"
+            ],
+            "correct": true,
+            "engine": "retrieval + rules",
+            "answer": "Rohit — “Deploy the fix”, due tomorrow. [S4-4cb09f]"
+          },
+          {
+            "meeting": "mixed_hinglish.txt",
+            "question": "What is the token expiry going to be?",
+            "expected": [
+              "24 hours"
+            ],
+            "correct": true,
+            "engine": "deepset/roberta-base-squad2",
+            "answer": "**24 hours** — Ananya (10:03:00): “Theek hai, let's increase the token expiry to 24 hours.” [S3-e862a9]"
+          }
+        ]
+      },
+      "hybrid_nli": {
+        "config": "hugging-face models",
+        "decisions": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "tp": 7,
+          "fp": 0,
+          "fn": 0
+        },
+        "revision_accuracy": "1/1",
+        "proposals": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "tp": 6,
+          "fp": 0,
+          "fn": 0
+        },
+        "tasks": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "tp": 8,
+          "fp": 0,
+          "fn": 0
+        },
+        "owner_acc": 1.0,
+        "deadline_acc": 1.0,
+        "unresolved_questions": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "tp": 3,
+          "fp": 0,
+          "fn": 0
+        },
+        "qa_answer_acc": "12/12",
+        "qa_abstain_acc": "5/5",
+        "rouge": {
+          "summary_rouge1": 0.348,
+          "summary_rougeL": 0.275,
+          "overview_rouge1": 0.555,
+          "overview_rouge2": 0.336,
+          "overview_rougeL": 0.405
+        },
+        "abstractive_sentences_supported": "12/12",
+        "latency_ms": {
+          "analyze_ms": 4275.3,
+          "summary_ms": 44.8,
+          "qa_ms": 32.2
+        },
+        "qa_log": [
+          {
+            "meeting": "demo_indexing.txt",
+            "question": "Why did the team choose indexing first?",
+            "expected": "ABSTAIN",
+            "correct": true,
+            "engine": "retrieval + rules",
+            "answer": "The transcript records the relevant statement — Rahul (10:06:00): “Let's implement indexing first and benchmark it before adding caching.” [S4-d7d187] — but the reason was not explicitly stated. I won't guess a rationale. Related context (n"
+          },
+          {
+            "meeting": "demo_indexing.txt",
+            "question": "Who will complete the indexing changes?",
+            "expected": [
+              "Priya"
+            ],
+            "correct": true,
+            "engine": "retrieval + rules",
+            "answer": "Priya — “Complete the indexing changes”, due Friday. [S5-73a044]"
+          },
+          {
+            "meeting": "demo_indexing.txt",
+            "question": "When are the indexing changes due?",
+            "expected": [
+              "Friday"
+            ],
+            "correct": true,
+            "engine": "retrieval + rules",
+            "answer": "“Complete the indexing changes” is due Friday (owner: Priya). [S5-73a044]"
+          },
+          {
+            "meeting": "demo_indexing.txt",
+            "question": "What did Arjun suggest?",
+            "expected": [
+              "caching"
+            ],
+            "correct": true,
+            "engine": "retrieval + rules",
+            "answer": "According to the transcript, Arjun (10:04:00): “We could also consider caching.” [S3-2acc82]"
+          },
+          {
+            "meeting": "demo_indexing.txt",
+            "question": "What is the marketing budget?",
+            "expected": "ABSTAIN",
+            "correct": true,
+            "engine": "retrieval + rules",
+            "answer": "I couldn't find anything about this in the captured transcript, so I can't answer it reliably."
+          },
+          {
+            "meeting": "sprint_planning.txt",
+            "question": "Why did we go with lazy loading first?",
+            "expected": [
+              "smallest change"
+            ],
+            "correct": true,
+            "engine": "retrieval + rules",
+            "answer": "The transcript gives this reason: Meera (01:40): “Let's go with lazy loading the payment scripts first, because it is the smallest change with the biggest impact.” [S5-4669fc]"
+          },
+          {
+            "meeting": "sprint_planning.txt",
+            "question": "When is the 2.4 release now?",
+            "expected": [
+              "Tuesday"
+            ],
+            "correct": true,
+            "engine": "deepset/roberta-base-squad2",
+            "answer": "**Tuesday** — Meera (04:12): “Actually, let's postpone the 2.4 release to next Tuesday instead, so David has time to fix the Android crash.” [S13-56993d] (Earlier plan: Friday — revised [S10-024b4e].)"
+          },
+          {
+            "meeting": "sprint_planning.txt",
+            "question": "Who will write the rollback plan?",
+            "expected": [
+              "Sana"
+            ],
+            "correct": true,
+            "engine": "retrieval + rules",
+            "answer": "Sana — “Write the rollback plan”, due next Monday. [S19-f46f8b]"
+          },
+          {
+            "meeting": "sprint_planning.txt",
+            "question": "Who is going to update the release notes?",
+            "expected": [
+              "no owner",
+              "unknown",
+              "not explicitly stated"
+            ],
+            "correct": true,
+            "engine": "retrieval + rules",
+            "answer": "The task “Update the release notes before the release” was mentioned, but no owner was explicitly stated. [S16-3ee073]"
+          },
+          {
+            "meeting": "sprint_planning.txt",
+            "question": "What is the Android crash rate?",
+            "expected": [
+              "3 percent"
+            ],
+            "correct": true,
+            "engine": "deepset/roberta-base-squad2",
+            "answer": "**3 percent** — David (03:32): “The crash rate on Android is still at 3 percent after the last build.” [S11-a47ba6]"
+          },
+          {
+            "meeting": "sprint_planning.txt",
+            "question": "How long will the migration downtime be?",
+            "expected": [
+              "20 minutes"
+            ],
+            "correct": true,
+            "engine": "retrieval + rules",
+            "answer": "David asked this at 06:20 [S20-99b136]; Karthik replied: “Probably around 20 minutes if we run it at night.” [S21-0463dc]"
+          },
+          {
+            "meeting": "sprint_planning.txt",
+            "question": "Which payment providers are used most often?",
+            "expected": "ABSTAIN",
+            "correct": true,
+            "engine": "retrieval + rules",
+            "answer": "This was asked by Sana at 02:31 [S8-88a935], but no clear answer appears in the captured transcript."
+          },
+          {
+            "meeting": "sprint_planning.txt",
+            "question": "What color will the new checkout button be?",
+            "expected": "ABSTAIN",
+            "correct": true,
+            "engine": "retrieval + rules",
+            "answer": "I couldn't find anything about this in the captured transcript, so I can't answer it reliably."
+          },
+          {
+            "meeting": "unlabeled_speakers.vtt",
+            "question": "Who will draft the email copy?",
+            "expected": [
+              "Speaker 2"
+            ],
+            "correct": true,
+            "engine": "retrieval + rules",
+            "answer": "Speaker 2 — “Draft the email copy”, due Friday. [S4-6bb8f8]"
+          },
+          {
+            "meeting": "unlabeled_speakers.vtt",
+            "question": "What tool will send the emails?",
+            "expected": "ABSTAIN",
+            "correct": true,
+            "engine": "retrieval + rules",
+            "answer": "This was asked by Speaker 1 at 00:20 [S5-4c5c90], but no clear answer appears in the captured transcript."
+          },
+          {
+            "meeting": "mixed_hinglish.txt",
+            "question": "Who will deploy the fix?",
+            "expected": [
+              "Rohit"
+            ],
+            "correct": true,
+            "engine": "retrieval + rules",
+            "answer": "Rohit — “Deploy the fix”, due tomorrow. [S4-4cb09f]"
+          },
+          {
+            "meeting": "mixed_hinglish.txt",
+            "question": "What is the token expiry going to be?",
+            "expected": [
+              "24 hours"
+            ],
+            "correct": true,
+            "engine": "deepset/roberta-base-squad2",
+            "answer": "**24 hours** — Ananya (10:03:00): “Theek hai, let's increase the token expiry to 24 hours.” [S3-e862a9]"
+          }
+        ]
+      }
+    },
+    "held-out": {
+      "rules": {
+        "config": "rules only",
+        "decisions": {
+          "precision": 0.667,
+          "recall": 1.0,
+          "f1": 0.8,
+          "tp": 2,
+          "fp": 1,
+          "fn": 0
+        },
+        "revision_accuracy": "0/0",
+        "proposals": {
+          "precision": 1.0,
+          "recall": 0.333,
+          "f1": 0.5,
+          "tp": 1,
+          "fp": 0,
+          "fn": 2
+        },
+        "tasks": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "tp": 3,
+          "fp": 0,
+          "fn": 0
+        },
+        "owner_acc": 1.0,
+        "deadline_acc": 1.0,
+        "unresolved_questions": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "tp": 1,
+          "fp": 0,
+          "fn": 0
+        },
+        "qa_answer_acc": "4/4",
+        "qa_abstain_acc": "2/2",
+        "rouge": {
+          "summary_rouge1": 0.458,
+          "summary_rougeL": 0.249,
+          "overview_rouge1": 0.357,
+          "overview_rouge2": 0.116,
+          "overview_rougeL": 0.242
+        },
+        "abstractive_sentences_supported": null,
+        "latency_ms": {
+          "analyze_ms": 27.0,
+          "summary_ms": 0.9,
+          "qa_ms": 4.2
+        },
+        "qa_log": [
+          {
+            "meeting": "heldout_design_review.txt",
+            "question": "Why did we pick the message queue?",
+            "expected": [
+              "retries"
+            ],
+            "correct": true,
+            "engine": "retrieval + rules",
+            "answer": "The transcript gives this reason: Tanvi (01:30): “Okay, we're going to go with the message queue, since it also gives us retries for free.” [S5-22a8c6]"
+          },
+          {
+            "meeting": "heldout_design_review.txt",
+            "question": "Which queue will we use?",
+            "expected": [
+              "SQS"
+            ],
+            "correct": true,
+            "engine": "retrieval + rules",
+            "answer": "Rajesh asked this at 01:52 [S6-eeb206]; Elena replied: “SQS, because we are already on AWS.” [S7-444791]"
+          },
+          {
+            "meeting": "heldout_design_review.txt",
+            "question": "Who is writing the design doc?",
+            "expected": [
+              "Rajesh"
+            ],
+            "correct": true,
+            "engine": "retrieval + rules",
+            "answer": "According to the transcript, Tanvi (02:40): “Rajesh, could you write the design doc for the queue integration by the 15th?” [S9-8eefef]"
+          },
+          {
+            "meeting": "heldout_design_review.txt",
+            "question": "What is the target latency for push notifications?",
+            "expected": [
+              "two seconds"
+            ],
+            "correct": true,
+            "engine": "retrieval + rules",
+            "answer": "Elena asked this at 05:50 [S18-cf8f29]; Tanvi replied (this may be the answer): “Under two seconds at the 95th percentile.” [S19-f7156f]"
+          },
+          {
+            "meeting": "heldout_design_review.txt",
+            "question": "Do we have budget for the CMS licence upgrade?",
+            "expected": "ABSTAIN",
+            "correct": true,
+            "engine": "retrieval + rules",
+            "answer": "This was asked by Tanvi at 04:48 [S15-c71214], but no clear answer appears in the captured transcript."
+          },
+          {
+            "meeting": "heldout_design_review.txt",
+            "question": "Which mobile platforms support rich notifications?",
+            "expected": "ABSTAIN",
+            "correct": true,
+            "engine": "retrieval + rules",
+            "answer": "I couldn't find anything about this in the captured transcript, so I can't answer it reliably."
+          }
+        ]
+      },
+      "models": {
+        "config": "hugging-face models",
+        "decisions": {
+          "precision": 0.667,
+          "recall": 1.0,
+          "f1": 0.8,
+          "tp": 2,
+          "fp": 1,
+          "fn": 0
+        },
+        "revision_accuracy": "0/0",
+        "proposals": {
+          "precision": 1.0,
+          "recall": 0.333,
+          "f1": 0.5,
+          "tp": 1,
+          "fp": 0,
+          "fn": 2
+        },
+        "tasks": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "tp": 3,
+          "fp": 0,
+          "fn": 0
+        },
+        "owner_acc": 1.0,
+        "deadline_acc": 1.0,
+        "unresolved_questions": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "tp": 1,
+          "fp": 0,
+          "fn": 0
+        },
+        "qa_answer_acc": "4/4",
+        "qa_abstain_acc": "2/2",
+        "rouge": {
+          "summary_rouge1": 0.408,
+          "summary_rougeL": 0.247,
+          "overview_rouge1": 0.55,
+          "overview_rouge2": 0.367,
+          "overview_rougeL": 0.43
+        },
+        "abstractive_sentences_supported": "4/4",
+        "latency_ms": {
+          "analyze_ms": 1071.0,
+          "summary_ms": 5798.4,
+          "qa_ms": 54.1
+        },
+        "qa_log": [
+          {
+            "meeting": "heldout_design_review.txt",
+            "question": "Why did we pick the message queue?",
+            "expected": [
+              "retries"
+            ],
+            "correct": true,
+            "engine": "retrieval + rules",
+            "answer": "The transcript gives this reason: Tanvi (01:30): “Okay, we're going to go with the message queue, since it also gives us retries for free.” [S5-22a8c6]"
+          },
+          {
+            "meeting": "heldout_design_review.txt",
+            "question": "Which queue will we use?",
+            "expected": [
+              "SQS"
+            ],
+            "correct": true,
+            "engine": "retrieval + rules",
+            "answer": "Rajesh asked this at 01:52 [S6-eeb206]; Elena replied: “SQS, because we are already on AWS.” [S7-444791]"
+          },
+          {
+            "meeting": "heldout_design_review.txt",
+            "question": "Who is writing the design doc?",
+            "expected": [
+              "Rajesh"
+            ],
+            "correct": true,
+            "engine": "deepset/roberta-base-squad2",
+            "answer": "**Rajesh** — Tanvi (02:40): “Rajesh, could you write the design doc for the queue integration by the 15th?” [S9-8eefef]"
+          },
+          {
+            "meeting": "heldout_design_review.txt",
+            "question": "What is the target latency for push notifications?",
+            "expected": [
+              "two seconds"
+            ],
+            "correct": true,
+            "engine": "retrieval + rules",
+            "answer": "Elena asked this at 05:50 [S18-cf8f29]; Tanvi replied (this may be the answer): “Under two seconds at the 95th percentile.” [S19-f7156f]"
+          },
+          {
+            "meeting": "heldout_design_review.txt",
+            "question": "Do we have budget for the CMS licence upgrade?",
+            "expected": "ABSTAIN",
+            "correct": true,
+            "engine": "retrieval + rules",
+            "answer": "This was asked by Tanvi at 04:48 [S15-c71214], but no clear answer appears in the captured transcript."
+          },
+          {
+            "meeting": "heldout_design_review.txt",
+            "question": "Which mobile platforms support rich notifications?",
+            "expected": "ABSTAIN",
+            "correct": true,
+            "engine": "retrieval + rules",
+            "answer": "I couldn't find anything about this in the captured transcript, so I can't answer it reliably."
+          }
+        ]
+      },
+      "hybrid_nli": {
+        "config": "hugging-face models",
+        "decisions": {
+          "precision": 0.667,
+          "recall": 1.0,
+          "f1": 0.8,
+          "tp": 2,
+          "fp": 1,
+          "fn": 0
+        },
+        "revision_accuracy": "0/0",
+        "proposals": {
+          "precision": 1.0,
+          "recall": 0.333,
+          "f1": 0.5,
+          "tp": 1,
+          "fp": 0,
+          "fn": 2
+        },
+        "tasks": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "tp": 3,
+          "fp": 0,
+          "fn": 0
+        },
+        "owner_acc": 1.0,
+        "deadline_acc": 1.0,
+        "unresolved_questions": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "tp": 1,
+          "fp": 0,
+          "fn": 0
+        },
+        "qa_answer_acc": "4/4",
+        "qa_abstain_acc": "2/2",
+        "rouge": {
+          "summary_rouge1": 0.408,
+          "summary_rougeL": 0.247,
+          "overview_rouge1": 0.55,
+          "overview_rouge2": 0.367,
+          "overview_rougeL": 0.43
+        },
+        "abstractive_sentences_supported": "4/4",
+        "latency_ms": {
+          "analyze_ms": 7391.8,
+          "summary_ms": 69.8,
+          "qa_ms": 10.8
+        },
+        "qa_log": [
+          {
+            "meeting": "heldout_design_review.txt",
+            "question": "Why did we pick the message queue?",
+            "expected": [
+              "retries"
+            ],
+            "correct": true,
+            "engine": "retrieval + rules",
+            "answer": "The transcript gives this reason: Tanvi (01:30): “Okay, we're going to go with the message queue, since it also gives us retries for free.” [S5-22a8c6]"
+          },
+          {
+            "meeting": "heldout_design_review.txt",
+            "question": "Which queue will we use?",
+            "expected": [
+              "SQS"
+            ],
+            "correct": true,
+            "engine": "retrieval + rules",
+            "answer": "Rajesh asked this at 01:52 [S6-eeb206]; Elena replied: “SQS, because we are already on AWS.” [S7-444791]"
+          },
+          {
+            "meeting": "heldout_design_review.txt",
+            "question": "Who is writing the design doc?",
+            "expected": [
+              "Rajesh"
+            ],
+            "correct": true,
+            "engine": "deepset/roberta-base-squad2",
+            "answer": "**Rajesh** — Tanvi (02:40): “Rajesh, could you write the design doc for the queue integration by the 15th?” [S9-8eefef]"
+          },
+          {
+            "meeting": "heldout_design_review.txt",
+            "question": "What is the target latency for push notifications?",
+            "expected": [
+              "two seconds"
+            ],
+            "correct": true,
+            "engine": "retrieval + rules",
+            "answer": "Elena asked this at 05:50 [S18-cf8f29]; Tanvi replied (this may be the answer): “Under two seconds at the 95th percentile.” [S19-f7156f]"
+          },
+          {
+            "meeting": "heldout_design_review.txt",
+            "question": "Do we have budget for the CMS licence upgrade?",
+            "expected": "ABSTAIN",
+            "correct": true,
+            "engine": "retrieval + rules",
+            "answer": "This was asked by Tanvi at 04:48 [S15-c71214], but no clear answer appears in the captured transcript."
+          },
+          {
+            "meeting": "heldout_design_review.txt",
+            "question": "Which mobile platforms support rich notifications?",
+            "expected": "ABSTAIN",
+            "correct": true,
+            "engine": "retrieval + rules",
+            "answer": "I couldn't find anything about this in the captured transcript, so I can't answer it reliably."
+          }
+        ]
+      }
+    }
+  },
+  "device": "cpu",
+  "dialogue_acts": {
+    "n": 32,
+    "rules_accuracy": 0.938,
+    "nli_accuracy": 0.594,
+    "per_act_recall": {
+      "decision": {
+        "rules": "8/8",
+        "nli": "0/8"
+      },
+      "proposal": {
+        "rules": "4/6",
+        "nli": "5/6"
+      },
+      "task": {
+        "rules": "6/6",
+        "nli": "2/6"
+      },
+      "question": {
+        "rules": "5/5",
+        "nli": "5/5"
+      },
+      "other": {
+        "rules": "7/7",
+        "nli": "7/7"
+      }
+    }
+  },
+  "speech": {
+    "audio_seconds": 29.3,
+    "asr_seconds": 1.6,
+    "whisper_model": "base",
+    "wer": 0.0,
+    "asr_segments": 8,
+    "diarization_seconds": 1.2,
+    "speakers_true": 3,
+    "speakers_found": 3,
+    "speaker_accuracy": 1.0,
+    "assignments": [
+      [
+        "Samantha",
+        "SPEAKER_00"
+      ],
+      [
+        "Daniel",
+        "SPEAKER_01"
+      ],
+      [
+        "Samantha",
+        "SPEAKER_00"
+      ],
+      [
+        "Rishi",
+        "SPEAKER_02"
+      ],
+      [
+        "Daniel",
+        "SPEAKER_01"
+      ],
+      [
+        "Samantha",
+        "SPEAKER_00"
+      ],
+      [
+        "Rishi",
+        "SPEAKER_02"
+      ],
+      [
+        "Daniel",
+        "SPEAKER_01"
+      ]
+    ]
+  },
+  "translation": {
+    "hi": {
+      "round_trip_chrF": 0.835,
+      "numbers_preserved": "6/6",
+      "seconds_per_sentence": 1.22,
+      "samples": [
+        {
+          "en": "Priya will complete the indexing changes by Friday.",
+          "hi": "प्रिया शुक्रवार तक सूचकांक परिवर्तनों को पूरा करेगी।",
+          "back": "Priya will complete the index changes by Friday."
+        },
+        {
+          "en": "Let's postpone the 2.4 release to next Tuesday so David can fix the Android crash.",
+          "hi": "चलो अगले मंगलवार के लिए 2.4 रिलीज स्थगित करें ताकि डेविड एंड्रॉयड दुर्घटना को ठीक कर सकता है।",
+          "back": "Let 's postpone the 2.4 release for next Tuesday so that David Android can fix the crash."
+        },
+        {
+          "en": "The crash rate on Android is still at 3 percent after the last build.",
+          "hi": "एंड्रॉइड पर क्रैश दर अभी भी अंतिम बिल्ड के बाद 3 प्रतिशत पर है।",
+          "back": "The crash rate on Android is still at 3 percent after the last build."
+        }
+      ]
+    },
+    "te": {
+      "round_trip_chrF": 0.827,
+      "numbers_preserved": "6/6",
+      "seconds_per_sentence": 0.88,
+      "samples": [
+        {
+          "en": "Priya will complete the indexing changes by Friday.",
+          "te": "ప్రీయా శుక్రవారం నాటికి ఇండెక్సింగ్ మార్పులను పూర్తి చేస్తాడు.",
+          "back": "Priya will complete the indexing changes by Friday."
+        },
+        {
+          "en": "Let's postpone the 2.4 release to next Tuesday so David can fix the Android crash.",
+          "te": "వచ్చే మంగళవారం 2.4 విడుదలను వాయిదా వేద్దాం కాబట్టి డేవిడ్ ఆండ్రాయిడ్ క్రాష్ను పరిష్కరించగలడు.",
+          "back": "Let's postpone the release of 2.4 next Tuesday so David can fix the Android crash."
+        },
+        {
+          "en": "The crash rate on Android is still at 3 percent after the last build.",
+          "te": "ఆండ్రాయిడ్లో క్రాష్ రేటు చివరి బిల్డ్ తర్వాత ఇప్పటికీ 3 శాతంగా ఉంది.",
+          "back": "The crash rate on Android is still 3 percent after the last build."
+        }
+      ]
+    }
+  },
+  "models": {
+    "enabled": true,
+    "device": "cpu",
+    "reason": null,
+    "tasks": {
+      "summary": {
+        "model": "philschmid/bart-large-cnn-samsum",
+        "label": "Abstractive dialogue summarization",
+        "enabled": true,
+        "device": "cpu",
+        "downloaded": true,
+        "loaded": true,
+        "error": null
+      },
+      "mt": {
+        "model": "facebook/nllb-200-distilled-600M",
+        "label": "Machine translation",
+        "enabled": true,
+        "device": "mps",
+        "downloaded": true,
+        "loaded": true,
+        "error": null
+      },
+      "gen": {
+        "model": "Qwen/Qwen2.5-1.5B-Instruct",
+        "label": "Explanation generation",
+        "enabled": true,
+        "device": "mps",
+        "downloaded": true,
+        "loaded": false,
+        "error": null
+      },
+      "qa": {
+        "model": "deepset/roberta-base-squad2",
+        "label": "Extractive question answering",
+        "enabled": true,
+        "device": "cpu",
+        "downloaded": true,
+        "loaded": true,
+        "error": null
+      },
+      "embedding": {
+        "model": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+        "label": "Sentence embeddings",
+        "enabled": true,
+        "device": "cpu",
+        "downloaded": true,
+        "loaded": true,
+        "error": null
+      },
+      "nli": {
+        "model": "MoritzLaurer/mDeBERTa-v3-base-mnli-xnli",
+        "label": "Zero-shot dialogue acts",
+        "enabled": true,
+        "device": "cpu",
+        "downloaded": true,
+        "loaded": true,
+        "error": null
+      },
+      "ner": {
+        "model": "dslim/bert-base-NER",
+        "label": "Named entity recognition",
+        "enabled": true,
+        "device": "cpu",
+        "downloaded": true,
+        "loaded": true,
+        "error": null
+      },
+      "speaker": {
+        "model": "microsoft/wavlm-base-plus-sv",
+        "label": "Speaker embeddings",
+        "enabled": true,
+        "device": "cpu",
+        "downloaded": true,
+        "loaded": true,
+        "error": null
+      }
+    }
+  }
+}

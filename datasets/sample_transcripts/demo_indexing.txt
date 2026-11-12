@@ -1,0 +1,5 @@
+10:00 — Rahul: "We need to improve the application's response time."
+10:02 — Priya: "The database queries are slow. I suggest indexing frequently queried columns."
+10:04 — Arjun: "We could also consider caching."
+10:06 — Rahul: "Let's implement indexing first and benchmark it before adding caching."
+10:08 — Rahul: "Priya, please complete the indexing changes by Friday."

@@ -1,0 +1,77 @@
+# HawkScan (StackHawk DAST) configuration for the MeetBrief AI backend.
+# Scan a throwaway instance, never the one holding real meetings (the scan calls DELETE endpoints):
+#   MEETBRIEF_DATA_DIR=/tmp/mm_scan MEETBRIEF_PORT=8001 MEETBRIEF_MODELS=off MEETBRIEF_ROOMS_DEV_AUTH=1 \
+#     MEETBRIEF_API_TOKEN=<scan token> .venv/bin/python -m backend.main
+#   APP_HOST=http://127.0.0.1:8001 MEETBRIEF_SCAN_TOKEN=<scan token> SEED_MEETING_ID=<id> SEED_TASK_ID=<id> \
+#     SEED_ROOM_ID=<room id from POST /api/rooms/share> hawk scan
+# Dev identities (MEETBRIEF_ROOMS_DEV_AUTH=1) are enabled ONLY on this throwaway localhost instance so the shared-room
+# routes (which need a member email) are exercised; the scanner sends X-MeetBrief-Dev-User via the replacer below.
+# Assumptions: models off during the scan (same HTTP surface, avoids 5 s/summary); /api/data (delete-all) excluded so
+# the seeded meeting survives — it uses the same auth middleware as every other route.
+app:
+  applicationId: ${APP_ID:d2f0bb7b-5565-41ed-9cde-9c3b0053fcd3}
+  env: ${APP_ENV:Development}
+  host: ${APP_HOST:http://127.0.0.1:8001}
+  openApiConf:
+    path: /openapi.json
+    customVariables:
+      - field: meeting_id
+        values:
+          - ${SEED_MEETING_ID:missing}
+        requestMethods: [GET, POST, PUT, PATCH]
+      - field: meeting_id
+        values:
+          - "000000000000"   # DELETE calls hit a non-existent meeting so the seed data survives the scan
+        requestMethods: [DELETE]
+      - field: task_id
+        values:
+          - ${SEED_TASK_ID:T-00000000}
+      - field: room_id
+        values:
+          - ${SEED_ROOM_ID:000000000000}
+      - field: provider
+        values: [google_meet, zoom, teams]
+      - field: note_id
+        values:
+          - "0000000000"
+      - field: q
+        values:
+          - indexing
+          - release
+      - field: format
+        values: [md, json, txt, pdf]
+  excludePaths:
+    - "/api/data"
+  authentication:
+    external:
+      values:
+        - type: TOKEN
+          tokenType: ""
+          value:
+            name: X-MeetBrief-Token
+            val: ${MEETBRIEF_SCAN_TOKEN}
+    testPath:
+      path: /api/meetings
+      success: ".*200.*"
+      requestMethod: GET
+
+hawk:
+  spider:
+    base: true
+    maxDurationMinutes: 5
+    # the export route was not reached from the spec alone in the first scan (quality-gate gap)
+    seedPaths:
+      - ${SEED_EXPORT_PATH:/api/meetings}
+      # room catch-up was not reached from the spec in the first rooms scan (quality-gate gap)
+      - ${SEED_CATCHUP_PATH:/api/rooms}
+
+hawkAddOn:
+  replacer:
+    rules:
+      - matchString: X-MeetBrief-Dev-User
+        replacement: ${SCAN_DEV_USER:Scanner <scanner@college.edu>}
+        replaceOnly: false
+
+tags:
+  - name: _STACKHAWK_AGENT
+    value: ${HAWK_AGENT:none}

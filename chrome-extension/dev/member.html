@@ -1,0 +1,91 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>Member</title></head>
+<body>
+<!-- One simulated MeetBrief member: the real background.js running against an in-page mock of the chrome.* API.
+     The parent harness (rooms_harness.html) drives several of these as different people in the same meeting. -->
+<script>
+  const params = new URLSearchParams(location.search);
+  const NAME = params.get("name"), EMAIL = params.get("email"), API = params.get("api");
+  const TAB = 1;
+  window.log = [];
+  const listeners = { message: [], notifClick: [], notifButton: [], alarm: [], tabRemoved: [], tabUpdated: [] };
+  const mem = { local: { apiBase: API, devName: NAME, devEmail: EMAIL }, session: {} };
+  const area = (name) => ({
+    get: async (keys) => {
+      const src = mem[name];
+      if (keys === null || keys === undefined) return { ...src };
+      const list = typeof keys === "string" ? [keys] : Array.isArray(keys) ? keys : Object.keys(keys);
+      return Object.fromEntries(list.filter((k) => k in src).map((k) => [k, src[k]]));
+    },
+    set: async (obj) => { Object.assign(mem[name], JSON.parse(JSON.stringify(obj))); },
+    remove: async (keys) => { for (const k of [].concat(keys)) delete mem[name][k]; },
+  });
+  // what the meeting tab's content script would answer
+  window.content = { inMeeting: true, captionsVisible: true, capturing: false };
+  const contentReply = (msg) => {
+    log.push(["tab<-", msg.type]);
+    if (msg.type === "mm:status") { window.pageLabel = msg.text; return { ok: true }; }
+    const info = { platform: "Google Meet", platformId: "google_meet", title: "Sprint planning", inMeeting: content.inMeeting,
+      captionsVisible: content.captionsVisible, url: "https://meet.google.com/abc-defg-hij", meetingKey: "google_meet:abc-defg-hij" };
+    if (msg.type === "mm:start") content.capturing = true;
+    if (msg.type === "mm:stop") content.capturing = false;
+    return { ok: true, ...info };
+  };
+  window.chrome = {
+    runtime: {
+      id: "testextension", lastError: null,
+      onMessage: { addListener: (fn) => listeners.message.push(fn) },
+      onInstalled: { addListener: () => {} }, onStartup: { addListener: () => {} },
+      sendMessage: async (msg) => { log.push(["broadcast", msg.type, msg.state ? msg.state.state : ""]); return undefined; },
+      getContexts: async () => [],
+    },
+    storage: { local: area("local"), session: area("session") },
+    tabs: {
+      sendMessage: async (tabId, msg) => contentReply(msg),
+      query: async () => [{ id: TAB, windowId: 1 }],
+      get: async (id) => ({ id, windowId: 1, url: "https://meet.google.com/abc-defg-hij", title: "Meet" }),
+      create: async (o) => { log.push(["tab-create", o.url]); return { id: 99 }; },
+      update: async () => ({}),
+      onRemoved: { addListener: (fn) => listeners.tabRemoved.push(fn) },
+      onUpdated: { addListener: (fn) => listeners.tabUpdated.push(fn) },
+    },
+    notifications: {
+      create: (id, opts, cb) => { log.push(["notify", id, opts.title, opts.buttons ? opts.buttons.map((b) => b.title) : null, opts.message]); cb && cb(); },
+      clear: () => {},
+      onClicked: { addListener: (fn) => listeners.notifClick.push(fn) },
+      onButtonClicked: { addListener: (fn) => listeners.notifButton.push(fn) },
+    },
+    action: { setBadgeText: async (o) => { window.badge = o.text; }, setBadgeBackgroundColor: async () => {},
+              setTitle: async (o) => { window.tooltip = o.title; },
+              onClicked: { addListener: (fn) => { listeners.actionClick = fn; } } },
+    commands: { onCommand: { addListener: (fn) => { listeners.command = fn; } } },
+    scripting: { executeScript: async () => [] },
+    sidePanel: { setPanelBehavior: async () => {}, open: async () => {} },
+    contextMenus: { create: () => {}, onClicked: { addListener: () => {} } },
+    alarms: { create: (n, o) => log.push(["alarm", n]), clear: () => {}, onAlarm: { addListener: (fn) => listeners.alarm.push(fn) } },
+    offscreen: { createDocument: async () => {}, closeDocument: async () => {} },
+    tabCapture: { getMediaStreamId: async () => "x" },
+    windows: { update: async () => {}, getLastFocused: async () => null },
+    identity: { getRedirectURL: () => "https://testextension.chromiumapp.org/", launchWebAuthFlow: async () => { throw new Error("no google"); } },
+  };
+  // the service worker's importScripts("lib/identity.js")
+  window.importScripts = (src) => {
+    const x = new XMLHttpRequest();
+    x.open("GET", "/" + src, false);
+    x.send();
+    (0, eval)(x.responseText);
+  };
+  // helpers for the harness
+  window.toBackground = (msg) => new Promise((resolve) => {
+    for (const fn of listeners.message) { if (fn(msg, { tab: { id: TAB } }, resolve) === true) return; }
+    resolve(undefined);
+  });
+  window.pressNotificationButton = async (prefix, index) => {
+    const n = log.find((l) => l[0] === "notify" && String(l[1]).startsWith(prefix));
+    for (const fn of listeners.notifButton) await fn(n[1], index);
+  };
+  window.state = async () => (await chrome.storage.session.get("captures")).captures?.[TAB] || {};
+  window.__listeners = () => listeners;
+</script>
+<script src="/background.js"></script>
+</body></html>

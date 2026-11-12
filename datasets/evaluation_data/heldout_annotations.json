@@ -1,0 +1,23 @@
+{
+  "_note": "Held-out transcript written and annotated before evaluation; rules were NOT tuned on it.",
+  "meetings": [{
+    "file": "../evaluation_data/heldout_design_review.txt",
+    "decisions": [{"status": "confirmed", "keywords": ["message queue"]}, {"status": "confirmed", "keywords": ["sqs"]}],
+    "proposals": [{"keywords": ["message queue"]}, {"keywords": ["batching"]}, {"keywords": ["cms"]}],
+    "tasks": [
+      {"keywords": ["design doc"], "owner": "Rajesh", "deadline": "the 15th"},
+      {"keywords": ["sqs", "staging"], "owner": "Elena", "deadline": "this week"},
+      {"keywords": ["licence", "finance"], "owner": "Omar", "deadline": "Friday"}
+    ],
+    "unresolved_questions": [["budget", "cms"]],
+    "qa": [
+      {"q": "Why did we pick the message queue?", "expect": ["retries"]},
+      {"q": "Which queue will we use?", "expect": ["SQS"]},
+      {"q": "Who is writing the design doc?", "expect": ["Rajesh"]},
+      {"q": "What is the target latency for push notifications?", "expect": ["two seconds"]},
+      {"q": "Do we have budget for the CMS licence upgrade?", "expect": "ABSTAIN"},
+      {"q": "Which mobile platforms support rich notifications?", "expect": "ABSTAIN"}
+    ],
+    "reference_summary": "Notifications are sent synchronously and the API times out at peak hours. Rajesh recommended a message queue and Elena suggested batching. Tanvi decided to use a message queue because it provides retries, and the team agreed on SQS since they already use AWS. Rajesh will write the queue integration design doc by the 15th and Elena will set up the SQS staging environment this week. Omar proposed moving hard-coded email templates into the CMS; whether there is budget for the CMS licence is unresolved, and Omar will check the cost with finance before Friday. The push notification latency target is under two seconds at p95."
+  }]
+}

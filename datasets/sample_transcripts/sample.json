@@ -1,0 +1,6 @@
+{"segments": [
+  {"start": 0, "end": 4, "speaker": "Lena", "text": "Our goal this week is to finish the search feature."},
+  {"start": 4, "end": 9, "speaker": "Omar", "text": "I suggest using Elasticsearch for the full-text index."},
+  {"start": 9, "end": 13, "speaker": "Lena", "text": "We decided to use Postgres full-text search instead because it avoids a new service."},
+  {"start": 13, "end": 17, "speaker": "Lena", "text": "Omar, can you build the search API by Thursday?"}
+]}

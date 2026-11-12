@@ -1,0 +1,73 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>Rooms Harness</title></head>
+<body>
+<!-- Drives two simulated members (real background.js each) against a test backend running with
+     MEETBRIEF_ROOMS_DEV_AUTH=1: Priya joins on time and shares, Rahul joins late, Priya leaves → Rahul captures. -->
+<pre id="out"></pre>
+<script>
+  const API = new URLSearchParams(location.search).get("api") || "http://127.0.0.1:8002";
+  const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+  function member(name, email) {
+    return new Promise((resolve) => {
+      const f = document.createElement("iframe");
+      f.src = `member.html?name=${encodeURIComponent(name)}&email=${encodeURIComponent(email)}&api=${encodeURIComponent(API)}`;
+      f.onload = () => resolve(f.contentWindow);
+      document.body.appendChild(f);
+    });
+  }
+  const R = [];
+  const ok = (label, cond, extra) => R.push([label, !!cond, extra ?? ""]);
+  let priya, ps;
+  const seg = (t, s) => ({ text: t, speaker_name: s, start_time: 0, end_time: 3 });
+  window.phase1 = async function () {
+    priya = await member("Priya", "priya@college.edu");
+    // 1. Priya joins the call first → no room yet → she shares it automatically (auto_share is the default)
+    await priya.toBackground({ type: "meeting:joined", info: { meetingKey: "google_meet:abc-defg-hij", platform: "Google Meet",
+      platformId: "google_meet", title: "Sprint planning", url: "https://meet.google.com/abc-defg-hij", captionsVisible: true, inMeeting: true } });
+    const prompt = priya.log.find((l) => l[0] === "notify" && String(l[1]).startsWith("mm-share:"));
+    if (prompt) await priya.pressNotificationButton("mm-share:", 0);  // only if auto-share was switched off
+    const shared = priya.log.find((l) => l[0] === "notify" && String(l[1]).startsWith("mm-shared:"));
+    ok("First member shares the meeting (automatically)", shared || prompt, shared ? shared[2] : "via prompt");
+    // 2. room created, she becomes the capturer, capture starts in her tab
+    ps = await priya.state();
+    ok("Room created, Priya is capturer", ps.room && ps.room.role === "capturer", ps.room && ps.room.id);
+    ok("Priya's tab started capturing", priya.content.capturing && priya.badge === "REC");
+    // 3. captions flow into the room
+    const r1 = await priya.toBackground({ type: "segments", segments: [seg("The database queries are slow.", "Priya"),
+      seg("Let's implement indexing first.", "Rahul"), seg("Priya, please finish the indexing changes by Friday.", "Rahul")] });
+    ok("Segments accepted by the room", r1 && r1.ok, JSON.stringify(r1));
+    return { room: ps.room.id, results: R };
+  };
+  // (between phases the test ages the room by 10 minutes in the database: Rahul joins late)
+  window.phase2 = async function () {
+    // 4. Rahul joins late → recognised, joins the room automatically, gets the "joined late" notification, stands by
+    const rahul = await member("Rahul", "rahul@college.edu");
+    await rahul.toBackground({ type: "meeting:joined", info: { meetingKey: "google_meet:abc-defg-hij", platform: "Google Meet",
+      platformId: "google_meet", title: "Sprint planning", url: "https://meet.google.com/abc-defg-hij", captionsVisible: true, inMeeting: true } });
+    let rs = await rahul.state();
+    const late = rahul.log.find((l) => l[0] === "notify" && /late|Joined the MeetBrief room/.test(l[2]));
+    ok("Rahul auto-joined the same room", rs.room && rs.room.id === ps.room.id);
+    ok("Rahul is on standby (no duplicate capture)", rs.room && rs.room.role === "standby" && !rahul.content.capturing && rahul.badge === "ROOM");
+    ok("Rahul told what he missed", late, late && late[2]);
+    // Rahul's catch-up from the server (what the side panel shows)
+    const cu = await (await fetch(`${API}/api/rooms/${ps.room.id}/catchup`, { headers: { "X-MeetBrief-Dev-User": "Rahul <rahul@college.edu>" } })).json();
+    ok("Catch-up covers what he missed", /Friday/.test(cu.summary) && /What you missed/.test(cu.note), cu.note);
+    // 5. a standby member's segments are refused (duplicates)
+    const dup = await rahul.toBackground({ type: "segments", segments: [seg("duplicate", "Rahul")] });
+    ok("Standby cannot push duplicates", !(dup && dup.ok));
+    // 6. Priya leaves → room continues; Rahul's next heartbeat makes him the capturer
+    await priya.toBackground({ type: "meeting:left", info: {} });
+    await rahul.toBackground({ type: "room:tick", info: { captionsVisible: true } });
+    rs = await rahul.state();
+    ok("Rahul took over capturing after Priya left", rs.room && rs.room.role === "capturer" && rahul.content.capturing);
+    const r2 = await rahul.toBackground({ type: "segments", segments: [seg("Rahul will update the release notes tomorrow.", "Rahul")] });
+    ok("New capturer's segments accepted", r2 && r2.ok);
+    // 7. Rahul (last member) leaves → room ends with a final summary
+    await rahul.toBackground({ type: "meeting:left", info: {} });
+    const ended = rahul.log.find((l) => l[0] === "notify" && /Meeting ended/.test(l[2]));
+    ok("Last member leaving ends the room with a summary", ended);
+    document.getElementById("out").textContent = JSON.stringify(R, null, 1);
+    return R;
+  };
+</script>
+</body></html>

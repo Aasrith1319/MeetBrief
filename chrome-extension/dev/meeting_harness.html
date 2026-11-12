@@ -1,0 +1,104 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>Meeting Harness</title></head>
+<body>
+<!-- Developer harness: simulates Google Meet's call UI (leave button with the "call_end" icon, captions
+     toggle, "You left the meeting" screen) and runs the real adapter + meeting_detector against it. -->
+<div id="toolbar"></div>
+<div id="stage"></div>
+<pre id="out"></pre>
+<script>
+  // pretend to be a Meet call URL (same-origin pushState) and shim the extension messaging API
+  history.replaceState(null, "", "/abc-defg-hij");
+  window.__sent = [];
+  window.__listeners = [];
+  window.chrome = { runtime: {
+    id: "testextension",
+    sendMessage: (m) => { window.__sent.push(m); return Promise.resolve({}); },
+    onMessage: { addListener: (fn) => window.__listeners.push(fn) },
+  } };
+  window.__deliver = (msg) => new Promise((res) => {
+    for (const fn of window.__listeners) { if (fn(msg, {}, res) === true) return; }
+    res(undefined);
+  });
+</script>
+<script src="/content/platform_adapters/base.js"></script>
+<script src="/content/platform_adapters/google_meet.js"></script>
+<script>
+  // detect() normally checks location.hostname === "meet.google.com"
+  const meet = MeetBriefAdapters.all().find((a) => a.id === "google_meet");
+  MeetBriefAdapters.detect = () => meet;
+</script>
+<script src="/content/caption_capture.js"></script>
+<script src="/content/meeting_detector.js"></script>
+<script>
+  const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+  window.runHarness = async function () {
+    const log = [];
+    const types = () => window.__sent.map((m) => m.type);
+    await sleep(2500);
+    log.push(["before joining", types().includes("meeting:joined")]);
+    const pill = () => (document.getElementById("meetbrief-status") || {}).textContent || "";
+    log.push(["label: page detected", /page detected/.test(pill()), pill()]);
+    // join: Meet shows the toolbar with a leave button and a captions toggle (captions off)
+    document.getElementById("toolbar").innerHTML =
+      '<button aria-label="Turn on captions" aria-pressed="false" id="cc"><i>closed_caption_off</i></button>' +
+      '<button aria-label="Leave call"><i class="google-material-icons">call_end</i></button>';
+    document.getElementById("cc").addEventListener("click", () => {
+      document.getElementById("cc").setAttribute("aria-pressed", "true");
+      const region = document.createElement("div");
+      region.setAttribute("role", "region"); region.setAttribute("aria-label", "Captions");
+      region.innerHTML = '<div class="nMcdL"><div class="KcIKyf">Priya</div><div class="ygicle">Let us ship on Friday.</div></div>';
+      document.getElementById("stage").appendChild(region);
+    });
+    await sleep(2500);
+    log.push(["joined detected", types().includes("meeting:joined")]);
+    log.push(["label: in the call", /In the call/.test(pill()), pill()]);
+    await window.__deliver({ type: "mm:status", text: "Capturing for room “Sprint planning” (link registered) · 2 members", level: "rec" });
+    log.push(["label: updated by MeetBrief", /link registered/.test(pill()), pill()]);
+    // background answers meeting:joined with an automatic start that asks to switch captions on
+    const startReply = await window.__deliver({ type: "mm:start", offset: 0, enableCaptions: true });
+    log.push(["captions switched on automatically", document.getElementById("cc").getAttribute("aria-pressed") === "true"]);
+    log.push(["captions visible after start", !!(startReply && startReply.captionsVisible)]);
+    await sleep(5000);
+    log.push(["caption segment emitted", window.__sent.some((m) => m.type === "segments" && m.segments.some((s) => s.speaker_name === "Priya"))]);
+    // Meet hides its toolbar when the mouse is idle: a short gap must not count as leaving
+    const tb = document.getElementById("toolbar").innerHTML;
+    document.getElementById("toolbar").innerHTML = "";
+    await sleep(3000);
+    document.getElementById("toolbar").innerHTML = tb;
+    await sleep(2500);
+    log.push(["toolbar hidden 3 s is not a leave", !types().includes("meeting:left")]);
+    // leave the call: toolbar disappears and Meet shows the "You left the meeting" screen
+    document.getElementById("toolbar").innerHTML = "";
+    document.getElementById("stage").innerHTML = "<h1>You left the meeting</h1><button>Rejoin</button>";
+    await sleep(7000);
+    log.push(["left detected", types().includes("meeting:left")]);
+    log.push(["label: left", /You left/.test(pill()), pill()]);
+    log.push(["joined sent once", types().filter((t) => t === "meeting:joined").length === 1]);
+    document.getElementById("out").textContent = JSON.stringify(log, null, 1);
+    return log;
+  };
+  // Early Join: Meet's pre-join screen → MeetBrief turns mic + camera off and presses "Join now"
+  window.runAutoJoin = async function () {
+    const log = [];
+    const clicked = [];
+    document.getElementById("toolbar").innerHTML = "";
+    document.getElementById("stage").innerHTML =
+      '<button aria-label="Turn off microphone" id="mic">mic</button>' +
+      '<button aria-label="Turn off camera" id="cam">cam</button>' +
+      '<button id="join"><span>Join now</span></button>';
+    for (const id of ["mic", "cam", "join"]) document.getElementById(id).addEventListener("click", () => clicked.push(id));
+    document.getElementById("join").addEventListener("click", () => {
+      document.getElementById("stage").innerHTML = "";
+      document.getElementById("toolbar").innerHTML = '<button aria-label="Leave call"><i>call_end</i></button>';
+    });
+    await window.__deliver({ type: "mm:autojoin" });
+    await sleep(3500);
+    log.push(["mic turned off", clicked.includes("mic")], ["camera turned off", clicked.includes("cam")],
+             ["joined", clicked.includes("join")], ["mic/cam before join", clicked.indexOf("join") > clicked.indexOf("cam")]);
+    await sleep(2500);
+    log.push(["in call after auto-join", window.__sent.filter((m) => m.type === "meeting:joined").length >= 1]);
+    return log;
+  };
+</script>
+</body></html>
